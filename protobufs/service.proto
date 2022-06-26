@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+import "npproto/ndarray.proto";
+
+
+// Metadata associated with an MCMC chain.
+message FederatedLogpOpInput {
+    // Multiple input arrays
+    repeated npproto.ndarray inputs = 1;
+}
+message FederatedLogpOpOutput {
+    // Log-potential (must be scalar!)
+    npproto.ndarray log_potential = 1;
+    // Gradients of log-potential w.r.t. inputs
+    repeated npproto.ndarray gradients = 2;
+}
+
+service FederatedLogpOp {
+    rpc Evaluate(FederatedLogpOpInput) returns (FederatedLogpOpOutput);
+    rpc EvaluateStream(stream FederatedLogpOpInput) returns (stream FederatedLogpOpOutput);
+}
