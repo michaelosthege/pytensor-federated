@@ -44,10 +44,14 @@ class FederatedLogpOp(Op):
         return
 
     def grad(self, inputs: Sequence[Variable], output_grads: List[Variable]) -> List[Variable]:
+        # Unpack the output gradients of which we only need the
+        # one w.r.t. logp
+        g_logp, *gs_inputs = output_grads
+        assert all(str(g) == "<DisconnectedType>" for g in gs_inputs)
         # Call again on the original inputs, to obtain a handle
         # on the gradient. The computation will not actually be
         # performed again, because this call takes the same inputs
         # as the original one and will be optimized-away.
         _, *gradients = self(*inputs)
         # Return symbolic gradients for each input (of which there is one).
-        return gradients
+        return [g_logp * g for g in gradients]
