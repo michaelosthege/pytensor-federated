@@ -17,7 +17,7 @@ from aesara_federated import (
 from aesara_federated.service import LogpGradFunc
 
 _log = logging.getLogger(__file__)
-_log.setLevel(logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 
 
 class LinearModelBlackbox:
@@ -98,26 +98,6 @@ async def run_node(port: int = 50051):
     await server.start("127.0.0.1", port)
     await server.wait_closed()
     return
-
-
-class TestLinearModel:
-    def test_grad(self):
-        lm = LinearModelBlackbox(
-            data_x=[-1, 0, 1],
-            data_y=[1, 1, 1],
-            sigma=1,
-        )
-        # Perfect fit
-        np.testing.assert_array_equal(
-            lm(1, 0)[1],
-            [0, 0],
-        )
-        # Intercept too high
-        np.testing.assert_almost_equal(
-            lm(1.1, 0)[1],
-            [-0.3, 0],
-        )
-        pass
 
 
 if __name__ == "__main__":

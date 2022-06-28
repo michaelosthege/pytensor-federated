@@ -1,0 +1,14 @@
+name: aefenv
+channels:
+  - conda-forge
+dependencies:
+  - aesara==2.7.3
+  - aeppl==0.0.31
+  - black
+  - isort
+  - pytest
+  - pytest-cov
+  - pip
+  - pip:
+    - betterproto[compiler]==2.0.0b4
+    - pymc==4.0.1

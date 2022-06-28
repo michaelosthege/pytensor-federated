@@ -21,10 +21,3 @@ repos:
   hooks:
     - id: black
       exclude: (aesara_federated/rpc.py|aesara_federated/npproto/)
-- repo: https://github.com/PyCQA/pylint
-  rev: v2.13.8
-  hooks:
-    - id: pylint
-      args: [--rcfile=.pylintrc]
-      exclude: (test_*|aesara_federated/rpc.py|aesara_federated/npproto/)
-      files: ^aesara_federated/
