@@ -86,6 +86,7 @@ class FederatedLogpOpClient:
         """
         self._channel = Channel(host, port)
         self._client = FederatedLogpOpStub(self._channel)
+        self._loop = asyncio.get_event_loop()
         super().__init__()
 
     def __del__(self):
@@ -115,7 +116,7 @@ class FederatedLogpOpClient:
 
         # Make the asynchronous calls to the remote server
         eval_task = self._client.evaluate(fpi)
-        loop = asyncio.get_event_loop()
+        fpo = self._loop.run_until_complete(eval_task)
 
         # Decode outputs
         logp = ndarray_to_numpy(fpo.log_potential)
