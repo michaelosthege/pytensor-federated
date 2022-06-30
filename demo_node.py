@@ -39,7 +39,6 @@ class LinearModelBlackbox:
 
     def __call__(self, *parameters: Sequence[np.ndarray]) -> Tuple[np.ndarray, List[np.ndarray]]:
         logp, *grads = self._fn(*parameters)
-        print("Evaluated %s -> %s and %s" % (parameters, logp, grads))
         return logp, grads
 
 
