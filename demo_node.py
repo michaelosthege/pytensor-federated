@@ -1,19 +1,13 @@
 import asyncio
 import logging
-import sys
 from typing import List, Sequence, Tuple
 
 import aesara
 import aesara.tensor as at
 import grpclib
 import numpy as np
-import pymc as pm
 
-from aesara_federated import (
-    FederatedLogpOp,
-    FederatedLogpOpClient,
-    FederatedLogpOpService,
-)
+from aesara_federated import FederatedLogpOpService
 from aesara_federated.service import LogpGradFunc
 
 _log = logging.getLogger(__file__)
@@ -49,32 +43,6 @@ class LinearModelBlackbox:
         return logp, grads
 
 
-def run_model():
-    _log.info("Connecting to remote model")
-    client = FederatedLogpOpClient("127.0.0.1", port=50051)
-    _log.info("Wrapping into a FederatedLogpOp")
-    remote_model = FederatedLogpOp(client)
-
-    with pm.Model() as pmodel:
-        intercept = pm.Normal("intercept")
-        slope = pm.Normal("slope")
-        logp, *_ = remote_model(intercept, slope)
-        pm.Potential(
-            "potential",
-            var=logp,
-        )
-
-        _log.info("Running MAP estimation")
-        map_ = pm.find_MAP()
-        print(map_)
-
-        idata = pm.sample(tune=500, draws=200, cores=1)
-        import arviz
-
-        print(arviz.summary(idata))
-    return
-
-
 async def run_node(port: int = 50051):
     _log.info("Generating a secret dataset")
     x = np.linspace(0, 10, 10)
@@ -101,11 +69,5 @@ async def run_node(port: int = 50051):
 
 
 if __name__ == "__main__":
-    args = sys.argv
-    if len(args) == 1:
-        print("Pass either 'model' or 'node' as the first argument.")
-    elif args[1] == "node":
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(run_node())
-    elif args[1] == "model":
-        run_model()
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(run_node())

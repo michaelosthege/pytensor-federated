@@ -1,11 +1,11 @@
 import numpy as np
 
-import demo
+import demo_node
 
 
 class TestLinearModel:
     def test_grad(self):
-        lm = demo.LinearModelBlackbox(
+        lm = demo_node.LinearModelBlackbox(
             data_x=[-1, 0, 1],
             data_y=[1, 1, 1],
             sigma=1,
