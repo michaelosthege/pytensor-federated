@@ -22,6 +22,24 @@ LogpGradFunc = Callable[
 ]
 
 
+def _compute_federated_logp(
+    flop_input: FederatedLogpOpInput,
+    perform_grad: LogpGradFunc,
+) -> FederatedLogpOpOutput:
+    # Deserialize input arrays
+    inputs = [ndarray_to_numpy(i) for i in flop_input.inputs]
+    # Run the computation
+    logp, gradients = perform_grad(*inputs)
+    assert logp.shape == ()
+    assert len(gradients) == len(inputs), f"inputs: {inputs}, gradients: {gradients}"
+    # Encode results
+    result = FederatedLogpOpOutput(
+        log_potential=ndarray_from_numpy(logp),
+        gradients=[ndarray_from_numpy(g) for g in gradients],
+    )
+    return result
+
+
 class FederatedLogpOpService(FederatedLogpOpBase):
     def __init__(
         self,
@@ -34,18 +52,7 @@ class FederatedLogpOpService(FederatedLogpOpBase):
         self,
         federated_logp_op_input: FederatedLogpOpInput,
     ) -> FederatedLogpOpOutput:
-        # Deserialize input arrays
-        inputs = [ndarray_to_numpy(i) for i in federated_logp_op_input.inputs]
-        # Run the computation
-        logp, gradients = self._perform_grad(*inputs)
-        assert logp.shape == ()
-        assert len(gradients) == len(inputs), f"inputs: {inputs}, gradients: {gradients}"
-        # Encode results
-        result = FederatedLogpOpOutput(
-            log_potential=ndarray_from_numpy(logp),
-            gradients=[ndarray_from_numpy(g) for g in gradients],
-        )
-        return result
+        return _compute_federated_logp(federated_logp_op_input, self._perform_grad)
 
 
 class FederatedLogpOpClient:
