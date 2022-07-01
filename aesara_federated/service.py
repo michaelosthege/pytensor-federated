@@ -149,6 +149,9 @@ class FederatedLogpOpClient:
         self._channel.close()
         return
 
+    def __call__(self, *inputs: Sequence[np.ndarray]) -> Tuple[np.ndarray, List[np.ndarray]]:
+        return self.evaluate(*inputs)
+
     def evaluate(
         self, *inputs: Sequence[np.ndarray], use_stream=True
     ) -> Tuple[np.ndarray, List[np.ndarray]]:

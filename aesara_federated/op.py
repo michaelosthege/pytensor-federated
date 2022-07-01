@@ -5,20 +5,20 @@ import numpy as np
 from aesara.graph.basic import Apply, Variable
 from aesara.graph.op import Op, OutputStorageType, ParamsInputType
 
-from .service import FederatedLogpOpClient
+from .service import LogpGradFunc
 
 
 class FederatedLogpOp(Op):
-    """An Op that remotely computes a log-potential and its gradient w.r.t the inputs.
+    """An Op that wraps a callable returning a log-potential and its gradient w.r.t the inputs.
 
     This Op returns the log-potential AND the gradient, but it also
     has a `.grad()` which returns only the gradient.
     """
 
-    _props = ("_client",)
+    _props = ("_logp_grad_func",)
 
-    def __init__(self, client: FederatedLogpOpClient) -> None:
-        self._client = client
+    def __init__(self, logp_grad_func: LogpGradFunc) -> None:
+        self._logp_grad_func = logp_grad_func
         super().__init__()
 
     def make_node(self, *inputs: Variable) -> Apply:
@@ -37,7 +37,7 @@ class FederatedLogpOp(Op):
         output_storage: OutputStorageType,
         params: ParamsInputType = None,
     ) -> None:
-        logp, gradient = self._client.evaluate(*inputs)
+        logp, gradient = self._logp_grad_func(*inputs)
         output_storage[0][0] = logp
         for g, grad in enumerate(gradient):
             output_storage[1 + g][0] = grad

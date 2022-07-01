@@ -14,6 +14,9 @@ class _MockFederatedLogpOpClient:
     def evaluate(self, *inputs):
         return self._fn(*inputs)
 
+    def __call__(self, *inputs):
+        return self.evaluate(*inputs)
+
 
 def dummy_quadratic_model(a, b):
     rng = np.random.RandomState(42)
@@ -32,7 +35,7 @@ class TestFederatedLogpOp:
     def test_init(self):
         client = _MockFederatedLogpOpClient(dummy_quadratic_model)
         flop = op.FederatedLogpOp(client)
-        assert flop._client is client
+        assert flop._logp_grad_func is client
         pass
 
     def test_make_node(self):
