@@ -1,5 +1,6 @@
 from typing import List, Sequence
 
+import aesara
 import aesara.tensor as at
 import numpy as np
 from aesara.graph.basic import Apply, Variable
@@ -47,7 +48,9 @@ class FederatedLogpOp(Op):
         # Unpack the output gradients of which we only need the
         # one w.r.t. logp
         g_logp, *gs_inputs = output_grads
-        assert all(str(g) == "<DisconnectedType>" for g in gs_inputs)
+        for i, g in enumerate(gs_inputs):
+            if not isinstance(g.type, aesara.gradient.DisconnectedType):
+                raise ValueError(f"Can't propagate gradients wrt parameter {i+1}")
         # Call again on the original inputs, to obtain a handle
         # on the gradient. The computation will not actually be
         # performed again, because this call takes the same inputs
