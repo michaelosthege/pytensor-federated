@@ -11,4 +11,4 @@ dependencies:
   - pip
   - pip:
     - betterproto[compiler]==2.0.0b4
-    - pymc==4.0.1
+    - pymc>=4.1.0
