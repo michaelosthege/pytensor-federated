@@ -64,7 +64,7 @@ def test_linear_model_equivalence():
     pass
 
 
-def test_linear_model_logp_dlogp():
+def test_linear_model_logp_dlogp_findmap():
     x = np.array([1, 2, 3])
     y = np.array([2, 3, 1])
     sigma = 0.2
@@ -78,6 +78,7 @@ def test_linear_model_logp_dlogp():
 
         P1 = pm.compile_fn(pmodel.logp())
         dP1 = pm.compile_fn(pmodel.dlogp())
+        map_1 = pm.find_MAP()
 
     # Build the same model using the blackbox Op and a Potential
     lmb = demo_node.LinearModelBlackbox(x, y, sigma)
@@ -90,6 +91,7 @@ def test_linear_model_logp_dlogp():
 
         P2 = pm.compile_fn(pmodel.logp())
         dP2 = pm.compile_fn(pmodel.dlogp())
+        map_2 = pm.find_MAP()
 
     # Compare the model's logp values
     test_point = dict(intercept=0.5, slope=1.2)
@@ -101,4 +103,7 @@ def test_linear_model_logp_dlogp():
     for dp1, dp2 in zip(grad1, grad2):
         assert dp1 == dp2
 
+    # And also the MAP estimates
+    for vname in ["intercept", "slope"]:
+        np.testing.assert_almost_equal(map_1[vname], map_2[vname])
     pass
