@@ -10,5 +10,5 @@ dependencies:
   - pytest-cov
   - pip
   - pip:
-    - betterproto[compiler]==2.0.0b4
+    - betterproto[compiler]==2.0.0b5
     - pymc>=4.1.0

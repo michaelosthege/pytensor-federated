@@ -21,13 +21,14 @@ from . import npproto
 
 
 if TYPE_CHECKING:
+    import grpclib.server
     from betterproto.grpc.grpclib_client import MetadataLike
     from grpclib.metadata import Deadline
 
 
 @dataclass(eq=False, repr=False)
 class FederatedLogpOpInput(betterproto.Message):
-    """Metadata associated with an MCMC chain."""
+    """Input data for a FederatedLogpOp"""
 
     inputs: List["npproto.Ndarray"] = betterproto.message_field(1)
     """Multiple input arrays"""
@@ -35,6 +36,8 @@ class FederatedLogpOpInput(betterproto.Message):
 
 @dataclass(eq=False, repr=False)
 class FederatedLogpOpOutput(betterproto.Message):
+    """Return value of a FederatedLogpOp"""
+
     log_potential: "npproto.Ndarray" = betterproto.message_field(1)
     """Log-potential (must be scalar!)"""
 
@@ -46,9 +49,10 @@ class FederatedLogpOpStub(betterproto.ServiceStub):
     async def evaluate(
         self,
         federated_logp_op_input: "FederatedLogpOpInput",
+        *,
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
-        metadata: Optional["_MetadataLike"] = None,
+        metadata: Optional["MetadataLike"] = None
     ) -> "FederatedLogpOpOutput":
         return await self._unary_unary(
             "/FederatedLogpOp/Evaluate",
@@ -64,9 +68,10 @@ class FederatedLogpOpStub(betterproto.ServiceStub):
         federated_logp_op_input_iterator: Union[
             AsyncIterable["FederatedLogpOpInput"], Iterable["FederatedLogpOpInput"]
         ],
+        *,
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
-        metadata: Optional["_MetadataLike"] = None,
+        metadata: Optional["MetadataLike"] = None
     ) -> AsyncIterator["FederatedLogpOpOutput"]:
         async for response in self._stream_stream(
             "/FederatedLogpOp/EvaluateStream",
@@ -91,12 +96,18 @@ class FederatedLogpOpBase(ServiceBase):
     ) -> AsyncIterator["FederatedLogpOpOutput"]:
         raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
 
-    async def __rpc_evaluate(self, stream: grpclib.server.Stream) -> None:
+    async def __rpc_evaluate(
+        self,
+        stream: "grpclib.server.Stream[FederatedLogpOpInput, FederatedLogpOpOutput]",
+    ) -> None:
         request = await stream.recv_message()
         response = await self.evaluate(request)
         await stream.send_message(response)
 
-    async def __rpc_evaluate_stream(self, stream: grpclib.server.Stream) -> None:
+    async def __rpc_evaluate_stream(
+        self,
+        stream: "grpclib.server.Stream[FederatedLogpOpInput, FederatedLogpOpOutput]",
+    ) -> None:
         request = stream.__aiter__()
         await self._call_rpc_handler_server_stream(
             self.evaluate_stream,

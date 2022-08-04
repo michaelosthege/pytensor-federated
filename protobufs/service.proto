@@ -3,11 +3,12 @@ syntax = "proto3";
 import "npproto/ndarray.proto";
 
 
-// Metadata associated with an MCMC chain.
+// Input data for a FederatedLogpOp
 message FederatedLogpOpInput {
     // Multiple input arrays
     repeated npproto.ndarray inputs = 1;
 }
+// Return value of a FederatedLogpOp
 message FederatedLogpOpOutput {
     // Log-potential (must be scalar!)
     npproto.ndarray log_potential = 1;
