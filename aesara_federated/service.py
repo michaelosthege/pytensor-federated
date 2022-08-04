@@ -1,6 +1,6 @@
 import asyncio
 import logging
-from typing import AsyncIterator, Callable, List, Optional, Sequence, Tuple, Type
+from typing import AsyncIterator, List, Optional, Sequence, Tuple, Type
 
 import grpclib
 import numpy as np
@@ -16,14 +16,9 @@ from .rpc import (
     FederatedLogpOpOutput,
     FederatedLogpOpStub,
 )
+from .signatures import LogpGradFunc
 
 _log = logging.getLogger(__file__)
-
-
-LogpGradFunc = Callable[
-    [Sequence[np.ndarray]],  # arbitrary number of input arrays
-    Tuple[np.ndarray, List[np.ndarray]],  # scalar log-p and gradients w.r.t. each input
-]
 
 
 def _compute_federated_logp(

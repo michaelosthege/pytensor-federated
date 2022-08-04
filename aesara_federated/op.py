@@ -6,7 +6,7 @@ import numpy as np
 from aesara.graph.basic import Apply, Variable
 from aesara.graph.op import Op, OutputStorageType, ParamsInputType
 
-from .service import LogpGradFunc
+from .signatures import LogpGradFunc
 
 
 class FederatedLogpOp(Op):

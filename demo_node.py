@@ -8,7 +8,7 @@ import grpclib
 import numpy as np
 
 from aesara_federated import FederatedLogpOpService
-from aesara_federated.service import LogpGradFunc
+from aesara_federated.signatures import LogpGradFunc
 
 _log = logging.getLogger(__file__)
 logging.basicConfig(level=logging.INFO)
