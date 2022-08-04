@@ -6,7 +6,7 @@ This package implements federated computing with [Aesara](https://github.com/aes
 Using `aesara-federated`, differentiable cost functions can be computed on federated nodes.
 Inputs and outputs are transmitted in binary via a bidirectional gRPC stream.
 
-A client side `FederatedLogpOp` is provided to conveniently embed federated compute operations in Aesara graphs such as a [PyMC](https://github.com/pymc-devs/pymc) model.
+A client side `LogpGradOp` is provided to conveniently embed federated compute operations in Aesara graphs such as a [PyMC](https://github.com/pymc-devs/pymc) model.
 
 The example code implements a simple Bayesian linear regression to data that is "private" to the federated compute process.
 

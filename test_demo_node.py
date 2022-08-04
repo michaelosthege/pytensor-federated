@@ -3,7 +3,7 @@ import numpy as np
 import pymc as pm
 
 import demo_node
-from aesara_federated.op import FederatedLogpOp
+from aesara_federated.op import LogpGradOp
 
 
 class TestLinearModel:
@@ -40,7 +40,7 @@ def test_linear_model_equivalence():
 
     # Build the same log-probability using the blackbox Op
     lmb = demo_node.LinearModelBlackbox(x, y, sigma)
-    lmbop = FederatedLogpOp(lmb)
+    lmbop = LogpGradOp(lmb)
     L_federated = lmbop(intercept, slope)[0]
 
     # Compare both
@@ -82,7 +82,7 @@ def test_linear_model_logp_dlogp_findmap():
 
     # Build the same model using the blackbox Op and a Potential
     lmb = demo_node.LinearModelBlackbox(x, y, sigma)
-    lmbop = FederatedLogpOp(lmb)
+    lmbop = LogpGradOp(lmb)
     with pm.Model() as pmodel:
         intercept = pm.Normal("intercept")
         slope = pm.Normal("slope")

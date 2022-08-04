@@ -9,7 +9,7 @@ from aesara.graph.op import Op, OutputStorageType, ParamsInputType
 from .signatures import LogpGradFunc
 
 
-class FederatedLogpOp(Op):
+class LogpGradOp(Op):
     """An Op that wraps a callable returning a log-potential and its gradient w.r.t the inputs.
 
     This Op returns the log-potential AND the gradient, but it also

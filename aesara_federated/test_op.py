@@ -6,7 +6,7 @@ from aesara.graph.basic import Apply, Variable
 from . import op
 
 
-class _MockFederatedLogpOpClient:
+class _MockLogpGradOpClient:
     def __init__(self, fn) -> None:
         self._fn = fn
         super().__init__()
@@ -31,16 +31,16 @@ def dummy_quadratic_model(a, b):
     return cost, grad
 
 
-class TestFederatedLogpOp:
+class TestLogpGradOp:
     def test_init(self):
-        client = _MockFederatedLogpOpClient(dummy_quadratic_model)
-        flop = op.FederatedLogpOp(client)
+        client = _MockLogpGradOpClient(dummy_quadratic_model)
+        flop = op.LogpGradOp(client)
         assert flop._logp_grad_func is client
         pass
 
     def test_make_node(self):
-        client = _MockFederatedLogpOpClient(dummy_quadratic_model)
-        flop = op.FederatedLogpOp(client)
+        client = _MockLogpGradOpClient(dummy_quadratic_model)
+        flop = op.LogpGradOp(client)
         a = at.scalar()
         b = at.scalar()
         apply = flop.make_node(a, b)
@@ -50,8 +50,8 @@ class TestFederatedLogpOp:
         pass
 
     def test_perform(self):
-        client = _MockFederatedLogpOpClient(dummy_quadratic_model)
-        flop = op.FederatedLogpOp(client)
+        client = _MockLogpGradOpClient(dummy_quadratic_model)
+        flop = op.LogpGradOp(client)
         a = at.scalar()
         b = at.scalar()
         apply = flop.make_node(a, b)
@@ -67,8 +67,8 @@ class TestFederatedLogpOp:
         pass
 
     def test_forward(self):
-        client = _MockFederatedLogpOpClient(dummy_quadratic_model)
-        flop = op.FederatedLogpOp(client)
+        client = _MockLogpGradOpClient(dummy_quadratic_model)
+        flop = op.LogpGradOp(client)
         a = at.scalar()
         b = at.scalar()
         logp, da, db = flop(a, b)
@@ -86,8 +86,8 @@ class TestFederatedLogpOp:
         pass
 
     def test_grad(self):
-        client = _MockFederatedLogpOpClient(dummy_quadratic_model)
-        flop = op.FederatedLogpOp(client)
+        client = _MockLogpGradOpClient(dummy_quadratic_model)
+        flop = op.LogpGradOp(client)
         a = at.scalar()
         b = at.scalar()
         logp, *_ = flop(a, b)

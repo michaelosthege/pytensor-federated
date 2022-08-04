@@ -1,5 +1,5 @@
 try:
-    from .op import FederatedLogpOp
+    from .op import LogpGradOp
 except ModuleNotFoundError:
     pass
 from .service import FederatedLogpOpClient, FederatedLogpOpService
