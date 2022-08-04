@@ -1,14 +1,13 @@
 import asyncio
 import logging
-from typing import List, Sequence, Tuple
+from typing import Sequence, Tuple
 
 import aesara
 import aesara.tensor as at
 import grpclib
 import numpy as np
 
-from aesara_federated import FederatedLogpOpService
-from aesara_federated.signatures import LogpGradFunc
+from aesara_federated import ArraysToArraysService, LogpGradFunc, wrap_logp_grad_func
 
 _log = logging.getLogger(__file__)
 logging.basicConfig(level=logging.INFO)
@@ -23,7 +22,7 @@ class LinearModelBlackbox:
         super().__init__()
 
     @staticmethod
-    def _make_function(x, y, sigma) -> LogpGradFunc:
+    def _make_function(x, y, sigma):
         intercept = at.scalar()
         slope = at.scalar()
         pred = intercept + x * slope
@@ -37,7 +36,9 @@ class LinearModelBlackbox:
         )
         return fn
 
-    def __call__(self, *parameters: Sequence[np.ndarray]) -> Tuple[np.ndarray, List[np.ndarray]]:
+    def __call__(
+        self, *parameters: Sequence[np.ndarray]
+    ) -> Tuple[np.ndarray, Sequence[np.ndarray]]:
         logp, *grads = self._fn(*parameters)
         return logp, grads
 
@@ -60,7 +61,7 @@ async def run_node(port: int = 50051):
         sigma=sigma,
     )
     _log.info("Starting the service on port %i", port)
-    service = FederatedLogpOpService(model_fn)
+    service = ArraysToArraysService(wrap_logp_grad_func(model_fn))
     server = grpclib.server.Server([service])
     await server.start("127.0.0.1", port)
     await server.wait_closed()
