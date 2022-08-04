@@ -2,21 +2,21 @@ syntax = "proto3";
 
 import "npproto/ndarray.proto";
 
-
-// Input data for a FederatedLogpOp
-message FederatedLogpOpInput {
-    // Multiple input arrays
-    repeated npproto.ndarray inputs = 1;
-}
-// Return value of a FederatedLogpOp
-message FederatedLogpOpOutput {
-    // Log-potential (must be scalar!)
-    npproto.ndarray log_potential = 1;
-    // Gradients of log-potential w.r.t. inputs
-    repeated npproto.ndarray gradients = 2;
+// Input type message of the ArraysToArraysService
+message InputArrays {
+    // A sequence of NumPy arrays
+    repeated npproto.ndarray items = 1;
 }
 
-service FederatedLogpOp {
-    rpc Evaluate(FederatedLogpOpInput) returns (FederatedLogpOpOutput);
-    rpc EvaluateStream(stream FederatedLogpOpInput) returns (stream FederatedLogpOpOutput);
+// Output type message of the ArraysToArraysService
+message OutputArrays {
+    // A sequence of NumPy arrays
+    repeated npproto.ndarray items = 1;
+}
+
+// The most generic type of compute operation,
+// computing NumPy arrays from NumPy arrays.
+service ArraysToArraysService {
+    rpc Evaluate(InputArrays) returns (OutputArrays);
+    rpc EvaluateStream(InputArrays) returns (OutputArrays);
 }

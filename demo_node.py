@@ -7,8 +7,7 @@ import aesara.tensor as at
 import grpclib
 import numpy as np
 
-from aesara_federated import FederatedLogpOpService
-from aesara_federated.signatures import LogpGradFunc
+from aesara_federated import ArraysToArraysService, LogpGradFunc, wrap_logp_grad_func
 
 _log = logging.getLogger(__file__)
 logging.basicConfig(level=logging.INFO)
@@ -60,7 +59,7 @@ async def run_node(port: int = 50051):
         sigma=sigma,
     )
     _log.info("Starting the service on port %i", port)
-    service = FederatedLogpOpService(model_fn)
+    service = ArraysToArraysService(wrap_logp_grad_func(model_fn))
     server = grpclib.server.Server([service])
     await server.start("127.0.0.1", port)
     await server.wait_closed()

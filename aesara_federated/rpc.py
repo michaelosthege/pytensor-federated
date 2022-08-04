@@ -4,13 +4,9 @@
 from dataclasses import dataclass
 from typing import (
     TYPE_CHECKING,
-    AsyncIterable,
-    AsyncIterator,
     Dict,
-    Iterable,
     List,
     Optional,
-    Union,
 )
 
 import betterproto
@@ -27,37 +23,34 @@ if TYPE_CHECKING:
 
 
 @dataclass(eq=False, repr=False)
-class FederatedLogpOpInput(betterproto.Message):
-    """Input data for a FederatedLogpOp"""
+class InputArrays(betterproto.Message):
+    """Input type message of the ArraysToArraysService"""
 
-    inputs: List["npproto.Ndarray"] = betterproto.message_field(1)
-    """Multiple input arrays"""
+    items: List["npproto.Ndarray"] = betterproto.message_field(1)
+    """A sequence of NumPy arrays"""
 
 
 @dataclass(eq=False, repr=False)
-class FederatedLogpOpOutput(betterproto.Message):
-    """Return value of a FederatedLogpOp"""
+class OutputArrays(betterproto.Message):
+    """Output type message of the ArraysToArraysService"""
 
-    log_potential: "npproto.Ndarray" = betterproto.message_field(1)
-    """Log-potential (must be scalar!)"""
-
-    gradients: List["npproto.Ndarray"] = betterproto.message_field(2)
-    """Gradients of log-potential w.r.t. inputs"""
+    items: List["npproto.Ndarray"] = betterproto.message_field(1)
+    """A sequence of NumPy arrays"""
 
 
-class FederatedLogpOpStub(betterproto.ServiceStub):
+class ArraysToArraysServiceStub(betterproto.ServiceStub):
     async def evaluate(
         self,
-        federated_logp_op_input: "FederatedLogpOpInput",
+        input_arrays: "InputArrays",
         *,
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
         metadata: Optional["MetadataLike"] = None
-    ) -> "FederatedLogpOpOutput":
+    ) -> "OutputArrays":
         return await self._unary_unary(
-            "/FederatedLogpOp/Evaluate",
-            federated_logp_op_input,
-            FederatedLogpOpOutput,
+            "/ArraysToArraysService/Evaluate",
+            input_arrays,
+            OutputArrays,
             timeout=timeout,
             deadline=deadline,
             metadata=metadata,
@@ -65,68 +58,55 @@ class FederatedLogpOpStub(betterproto.ServiceStub):
 
     async def evaluate_stream(
         self,
-        federated_logp_op_input_iterator: Union[
-            AsyncIterable["FederatedLogpOpInput"], Iterable["FederatedLogpOpInput"]
-        ],
+        input_arrays: "InputArrays",
         *,
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
         metadata: Optional["MetadataLike"] = None
-    ) -> AsyncIterator["FederatedLogpOpOutput"]:
-        async for response in self._stream_stream(
-            "/FederatedLogpOp/EvaluateStream",
-            federated_logp_op_input_iterator,
-            FederatedLogpOpInput,
-            FederatedLogpOpOutput,
+    ) -> "OutputArrays":
+        return await self._unary_unary(
+            "/ArraysToArraysService/EvaluateStream",
+            input_arrays,
+            OutputArrays,
             timeout=timeout,
             deadline=deadline,
             metadata=metadata,
-        ):
-            yield response
+        )
 
 
-class FederatedLogpOpBase(ServiceBase):
-    async def evaluate(
-        self, federated_logp_op_input: "FederatedLogpOpInput"
-    ) -> "FederatedLogpOpOutput":
+class ArraysToArraysServiceBase(ServiceBase):
+    async def evaluate(self, input_arrays: "InputArrays") -> "OutputArrays":
         raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
 
-    async def evaluate_stream(
-        self, federated_logp_op_input_iterator: AsyncIterator["FederatedLogpOpInput"]
-    ) -> AsyncIterator["FederatedLogpOpOutput"]:
+    async def evaluate_stream(self, input_arrays: "InputArrays") -> "OutputArrays":
         raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
 
     async def __rpc_evaluate(
-        self,
-        stream: "grpclib.server.Stream[FederatedLogpOpInput, FederatedLogpOpOutput]",
+        self, stream: "grpclib.server.Stream[InputArrays, OutputArrays]"
     ) -> None:
         request = await stream.recv_message()
         response = await self.evaluate(request)
         await stream.send_message(response)
 
     async def __rpc_evaluate_stream(
-        self,
-        stream: "grpclib.server.Stream[FederatedLogpOpInput, FederatedLogpOpOutput]",
+        self, stream: "grpclib.server.Stream[InputArrays, OutputArrays]"
     ) -> None:
-        request = stream.__aiter__()
-        await self._call_rpc_handler_server_stream(
-            self.evaluate_stream,
-            stream,
-            request,
-        )
+        request = await stream.recv_message()
+        response = await self.evaluate_stream(request)
+        await stream.send_message(response)
 
     def __mapping__(self) -> Dict[str, grpclib.const.Handler]:
         return {
-            "/FederatedLogpOp/Evaluate": grpclib.const.Handler(
+            "/ArraysToArraysService/Evaluate": grpclib.const.Handler(
                 self.__rpc_evaluate,
                 grpclib.const.Cardinality.UNARY_UNARY,
-                FederatedLogpOpInput,
-                FederatedLogpOpOutput,
+                InputArrays,
+                OutputArrays,
             ),
-            "/FederatedLogpOp/EvaluateStream": grpclib.const.Handler(
+            "/ArraysToArraysService/EvaluateStream": grpclib.const.Handler(
                 self.__rpc_evaluate_stream,
-                grpclib.const.Cardinality.STREAM_STREAM,
-                FederatedLogpOpInput,
-                FederatedLogpOpOutput,
+                grpclib.const.Cardinality.UNARY_UNARY,
+                InputArrays,
+                OutputArrays,
             ),
         }
