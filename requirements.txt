@@ -1,4 +1,4 @@
-aesara==2.7.3
 betterproto
 black
 isort
+numpy
