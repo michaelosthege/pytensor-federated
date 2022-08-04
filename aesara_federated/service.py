@@ -1,6 +1,6 @@
 import asyncio
 import logging
-from typing import AsyncIterator, List, Optional, Sequence, Tuple, Type
+from typing import TYPE_CHECKING, AsyncIterator, List, Optional, Sequence, Tuple, Type
 
 import grpclib
 import numpy as np
@@ -17,6 +17,10 @@ from .rpc import (
     FederatedLogpOpStub,
 )
 from .signatures import LogpGradFunc
+
+if TYPE_CHECKING:
+    from betterproto.grpc.grpclib_client import MetadataLike
+
 
 _log = logging.getLogger(__file__)
 
