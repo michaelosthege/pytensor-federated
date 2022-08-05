@@ -28,7 +28,7 @@ def run_model():
         map_ = pm.find_MAP()
         print(map_)
 
-        idata = pm.sample(tune=500, draws=200, cores=1)
+        idata = pm.sample(tune=500, draws=200)
 
         print(arviz.summary(idata))
     return

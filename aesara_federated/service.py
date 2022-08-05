@@ -124,25 +124,51 @@ class ArraysToArraysServiceClient:
         port : int
             Port of the gRPC server.
         """
-        self._channel = Channel(host, port)
-        self._client = ArraysToArraysServiceStub(self._channel)
-        self._loop = asyncio.get_event_loop()
-        self._stream = self._loop.run_until_complete(
-            start_bidirectional_stream(
-                client=self._client,
-                route="/ArraysToArraysService/EvaluateStream",
-                request_type=InputArrays,
-                response_type=OutputArrays,
-            )
-        )
+        self._host = host
+        self._port = port
+        # Some attributes won't be pickleable
+        # and will be initialized on first access.
+        self._lazy_channel = None
+        self._lazy_client = None
+        self._lazy_stream = None
         super().__init__()
 
+    @property
+    def _channel(self) -> Channel:
+        if self._lazy_channel is None:
+            self._lazy_channel = Channel(self._host, self._port)
+        return self._lazy_channel
+
+    @property
+    def _client(self) -> ArraysToArraysServiceStub:
+        if self._lazy_client is None:
+            self._lazy_client = ArraysToArraysServiceStub(self._channel)
+        return self._lazy_client
+
+    def __getstate__(self):
+        """Used by pickle to copy the object's state.
+        Here we are removing some non-pickleable "lazy" attributes.
+        """
+        state = self.__dict__.copy()
+        del state["_lazy_channel"]
+        del state["_lazy_client"]
+        del state["_lazy_stream"]
+        return state
+
+    def __setstate__(self, state):
+        """Used by pickle to instantiate a new object."""
+        self.__dict__.update(state)
+        # Recreate the lazy attributes
+        self._lazy_channel = None
+        self._lazy_client = None
+        self._lazy_stream = None
+
     def __del__(self):
-        # Announce stopping the streaming
-        self._stream.end()
-        # Close the stream
-        self._loop.run_until_complete(self._stream.__aexit__())
-        self._channel.close()
+        if self._lazy_stream is not None:
+            loop = asyncio.get_event_loop()
+            loop.run_until_complete(self._lazy_stream.end())
+        if self._channel is not None:
+            self._channel.close()
         return
 
     def __call__(self, *inputs: Sequence[np.ndarray]) -> Sequence[np.ndarray]:
@@ -173,7 +199,8 @@ class ArraysToArraysServiceClient:
             eval_task = self._streamed_evaluate(input)
         else:
             eval_task = self._client.evaluate(input)
-        output = self._loop.run_until_complete(eval_task)
+        loop = asyncio.get_event_loop()
+        output = loop.run_until_complete(eval_task)
 
         # Decode outputs
         outputs = [ndarray_to_numpy(o) for o in output.items]
@@ -181,7 +208,14 @@ class ArraysToArraysServiceClient:
 
     async def _streamed_evaluate(self, input: InputArrays) -> OutputArrays:
         """Internal wrapper around async methods of the bidirectional stream."""
-        await self._stream.send_message(input)
-        response = await self._stream.recv_message()
+        if self._lazy_stream is None:
+            self._lazy_stream = await start_bidirectional_stream(
+                client=self._client,
+                route="/ArraysToArraysService/EvaluateStream",
+                request_type=InputArrays,
+                response_type=OutputArrays,
+            )
+        await self._lazy_stream.send_message(input)
+        response = await self._lazy_stream.recv_message()
         assert response is not None
         return response
