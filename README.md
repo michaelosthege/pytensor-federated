@@ -29,6 +29,7 @@ conda env create -f environment.yml
 Additional dependencies are needed to compile the [protobufs](./protobufs/):
 
 ```bash
+conda install -c conda-forge protobuf
 pip install --pre betterproto[compiler]
 ```
 
