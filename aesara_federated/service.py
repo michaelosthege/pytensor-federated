@@ -49,7 +49,7 @@ def _run_compute_func(
     outputs = func(*inputs)
     # Encode results
     result = OutputArrays(
-        items=[ndarray_from_numpy(o) for o in outputs],
+        items=[ndarray_from_numpy(np.asarray(o)) for o in outputs],
     )
     return result
 
@@ -193,7 +193,7 @@ class ArraysToArraysServiceClient:
             Sequence of ``ndarray``s returned by the federated compute function.
         """
         # Encode inputs
-        input = InputArrays(items=[ndarray_from_numpy(i) for i in inputs])
+        input = InputArrays(items=[ndarray_from_numpy(np.asarray(i)) for i in inputs])
 
         # Make the asynchronous calls to the remote server
         if use_stream:

@@ -15,9 +15,7 @@ def wrap_logp_func(logp_func: LogpFunc) -> ComputeFunc:
     def compute_func(*inputs):
         logp = logp_func(*inputs)
         if not isinstance(logp, np.ndarray):
-            raise TypeError(
-                f"The return value of the logp function must be a scalar ndarray. Got {type(logp)}"
-            )
+            raise TypeError(f"The logp value must be a scalar ndarray. Got {type(logp)} instead.")
         if not logp.shape == ():
             raise Exception(f"Returned logp must be scalar, but got shape {logp.shape}")
         return (logp,)
@@ -29,11 +27,16 @@ def wrap_logp_grad_func(logp_grad_func: LogpGradFunc) -> ComputeFunc:
     """Wraps a logp function that also returns gradients as a ``ComputeFunc``."""
 
     def compute_func(*inputs):
-        logp, gradients = logp_grad_func(*inputs)
-        if not isinstance(logp, np.ndarray):
+        result = logp_grad_func(*inputs)
+        if not len(result) == 2:
             raise TypeError(
-                f"The return value of the logp function must be a scalar ndarray. Got {type(logp)}"
+                f"The return value of the logp function must be a tuple"
+                " of a scalar ndarray and a list of ndarrays for the gradients."
+                f" Got {type(result)} instead."
             )
+        logp, gradients = result
+        if not isinstance(logp, np.ndarray):
+            raise TypeError(f"The logp value must be a scalar ndarray. Got {type(logp)} instead.")
         if not logp.shape == ():
             raise Exception(f"Returned logp should be scalar, but got shape {logp.shape}")
         if not len(gradients) == len(inputs):
