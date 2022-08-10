@@ -1,5 +1,5 @@
 try:
-    from .op import LogpGradOp
+    from .op import LogpGradOp, LogpOp
 except ModuleNotFoundError:
     pass
 from .common import (

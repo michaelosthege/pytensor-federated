@@ -6,7 +6,36 @@ import numpy as np
 from aesara.graph.basic import Apply, Variable
 from aesara.graph.op import Op, OutputStorageType, ParamsInputType
 
-from .signatures import LogpGradFunc
+from .signatures import LogpFunc, LogpGradFunc
+
+
+class LogpOp(Op):
+    """An Op that wraps a callable returning a log-potential."""
+
+    _props = ("_logp_func",)
+
+    def __init__(self, logp_func: LogpFunc) -> None:
+        self._logp_func = logp_func
+        super().__init__()
+
+    def make_node(self, *inputs: Variable) -> Apply:
+        logp = at.scalar()
+        return Apply(
+            op=self,
+            inputs=inputs,
+            outputs=[logp],
+        )
+
+    def perform(
+        self,
+        node: Apply,
+        inputs: Sequence[np.ndarray],
+        output_storage: OutputStorageType,
+        params: ParamsInputType = None,
+    ) -> None:
+        logp = self._logp_func(*inputs)
+        output_storage[0][0] = logp
+        return
 
 
 class LogpGradOp(Op):
