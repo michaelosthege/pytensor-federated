@@ -113,12 +113,12 @@ def test_client_multiprocessing(eval_on_main, mp_start_method):
 
         # Passing clients as args
         with ctx.Pool(processes=3) as pool:
-            results = pool.map(run_product_queries, [client] * 30)
+            results = pool.map(run_product_queries, [client] * 5)
             assert all(results)
 
         # Passing client through the callable
         with ctx.Pool(processes=3) as pool:
-            results = pool.map(tester.run, [1000] * 30)
+            results = pool.map(tester.run, [25] * 5)
             assert all(results)
 
     finally:

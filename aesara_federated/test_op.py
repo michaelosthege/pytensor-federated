@@ -1,9 +1,21 @@
+import asyncio
+import logging
+import multiprocessing
+import platform
+import sys
+import time
+
 import aesara
 import aesara.tensor as at
+import arviz
+import grpclib
 import numpy as np
+import pymc as pm
+import pytest
+import scipy
 from aesara.graph.basic import Apply, Variable
 
-from . import op
+from aesara_federated import common, op, service
 
 
 class _MockLogpGradOpClient:
@@ -19,16 +31,75 @@ class _MockLogpGradOpClient:
 
 
 def dummy_quadratic_model(a, b):
+    """Dummy model with sum of squared residuals and manual gradients."""
     rng = np.random.RandomState(42)
     x = np.array([1, 2, 3])
     y = rng.normal(2 * x**2 + 0.5, scale=0.1)
     pred = a * x**2 + b
-    cost = np.sum((pred - y) ** 2)
+    cost = np.asarray(np.sum((pred - y) ** 2))
     grad = [
-        np.sum(2 * x**2 * (a * x**2 + b - y)),
-        np.sum(2 * (a * x**2 + b - y)),
+        np.asarray(np.sum(2 * x**2 * (a * x**2 + b - y))),
+        np.asarray(np.sum(2 * (a * x**2 + b - y))),
     ]
     return cost, grad
+
+
+def blackbox_linear_model(intercept, slope):
+    """Blackbox likelihood of a linear model.
+
+    There are 15 observations and the groundtruth is a=2, b=0.5.
+    """
+    rng = np.random.RandomState(42)
+    x = np.linspace(-3, 3, 15, dtype=float)
+    y = rng.normal(2 * x + 0.5, scale=0.1)
+    pred = slope * x + intercept
+    L = scipy.stats.norm.logpdf(loc=pred, scale=0.1, x=y)
+    return np.asarray(L.sum())
+
+
+def run_blackbox_linear_model_service(port: int):
+    async def run_server():
+        a2a_service = service.ArraysToArraysService(common.wrap_logp_func(blackbox_linear_model))
+        server = grpclib.server.Server([a2a_service])
+        await server.start("127.0.0.1", port)
+        await server.wait_closed()
+
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(run_server())
+    return
+
+
+def run_blackbox_linear_model_mcmc(port: int, cores: int):
+    client = common.LogpServiceClient("127.0.0.1", port)
+
+    # Do the check on the main process to keep tracebacks readable.
+    result = client(0.4, 1.2)
+    assert isinstance(result, np.ndarray)
+    np.testing.assert_allclose(result, -1511.41423640139)
+
+    # Create the Op, build and sample the PyMC model
+    blackbox_L = op.LogpOp(client)
+    with pm.Model():
+        # This runs with Metropolis which is inefficient.
+        # Let's make it easy...
+        intercept = at.constant(0.5)
+        slope = pm.Normal("slope", sigma=2)
+        L = blackbox_L(intercept, slope)
+        pm.Potential("L", L)
+        idata = pm.sample(
+            tune=200,
+            chains=3,
+            cores=cores,
+            step=pm.Metropolis(),
+            compute_convergence_checks=False,
+            random_seed=1234,
+        )
+    # Check the posterior medians against the ground truth.
+    # Print the summary so failure logs are more informative.
+    print(arviz.summary(idata))
+    pst = idata.posterior.stack(sample=("chain", "draw"))
+    np.testing.assert_allclose(np.median(pst.slope), 2, atol=0.1)
+    return
 
 
 class TestLogpGradOp:
@@ -59,8 +130,6 @@ class TestLogpGradOp:
         output_storage = [[None], [None], [None]]
         flop.perform(apply, inputs, output_storage)
         logp, (da, db) = dummy_quadratic_model(*inputs)
-        print(logp, (da, db))
-        print(output_storage)
         np.testing.assert_array_equal(output_storage[0][0], logp)
         np.testing.assert_array_equal(output_storage[1][0], da)
         np.testing.assert_array_equal(output_storage[2][0], db)
@@ -99,3 +168,51 @@ class TestLogpGradOp:
         np.testing.assert_array_equal(actual[1], exda)
         np.testing.assert_array_equal(actual[2], exdb)
         pass
+
+
+class TestLogpOp:
+    def test_pymc_sampling_sequential(self):
+        # Launch a blackbox loglikelihood on a child process.
+        port = 9130
+        p_server = multiprocessing.Process(target=run_blackbox_linear_model_service, args=(port,))
+        try:
+            p_server.start()
+            time.sleep(10)
+            run_blackbox_linear_model_mcmc(port, cores=1)
+        finally:
+            # Always stop the server again
+            p_server.terminate()
+            p_server.join()
+        pass
+
+    @pytest.mark.xfail(
+        condition=platform.system() == "Linux",
+        reason=(
+            "The combination of cloudpickle+fork used by PyMC re-uses the same stream across processes."
+            " This results in inputs/outputs being mixed-up between the gRPC clients."
+        ),
+    )
+    def test_pymc_sampling_parallel(self):
+        # Launch a blackbox loglikelihood on a child process.
+        port = 9130
+        p_server = multiprocessing.Process(target=run_blackbox_linear_model_service, args=(port,))
+        try:
+            p_server.start()
+            time.sleep(10)
+            run_blackbox_linear_model_mcmc(port, cores=4)
+        finally:
+            # Always stop the server again
+            p_server.terminate()
+            p_server.join()
+        pass
+
+
+if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
+
+    if len(sys.argv) < 2:
+        raise Exception("Pass 'service' or 'mcmc' as the first argument.")
+    if sys.argv[1] == "service":
+        run_blackbox_linear_model_service(port=9130)
+    elif sys.argv[1] == "mcmc":
+        run_blackbox_linear_model_mcmc(port=9130, cores=4)
