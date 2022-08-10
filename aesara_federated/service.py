@@ -165,6 +165,7 @@ class ArraysToArraysServiceClient:
 
     def __del__(self):
         if self._lazy_stream is not None:
+            _log.info("Closing evaluation stream")
             loop = asyncio.get_event_loop()
             loop.run_until_complete(self._lazy_stream.end())
         if self._channel is not None:
@@ -209,6 +210,7 @@ class ArraysToArraysServiceClient:
     async def _streamed_evaluate(self, input: InputArrays) -> OutputArrays:
         """Internal wrapper around async methods of the bidirectional stream."""
         if self._lazy_stream is None:
+            _log.info("Opening evaluation stream")
             self._lazy_stream = await start_bidirectional_stream(
                 client=self._client,
                 route="/ArraysToArraysService/EvaluateStream",
