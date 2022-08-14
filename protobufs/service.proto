@@ -6,12 +6,16 @@ import "npproto/ndarray.proto";
 message InputArrays {
     // A sequence of NumPy arrays
     repeated npproto.ndarray items = 1;
+    // A unique identifier of this input message.
+    string uuid = 2;
 }
 
 // Output type message of the ArraysToArraysService
 message OutputArrays {
     // A sequence of NumPy arrays
     repeated npproto.ndarray items = 1;
+    // The unique identifier of the corresponding input message.
+    string uuid = 2;
 }
 
 // The most generic type of compute operation,

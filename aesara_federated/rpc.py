@@ -33,6 +33,9 @@ class InputArrays(betterproto.Message):
     items: List["npproto.Ndarray"] = betterproto.message_field(1)
     """A sequence of NumPy arrays"""
 
+    uuid: str = betterproto.string_field(2)
+    """A unique identifier of this input message."""
+
 
 @dataclass(eq=False, repr=False)
 class OutputArrays(betterproto.Message):
@@ -40,6 +43,9 @@ class OutputArrays(betterproto.Message):
 
     items: List["npproto.Ndarray"] = betterproto.message_field(1)
     """A sequence of NumPy arrays"""
+
+    uuid: str = betterproto.string_field(2)
+    """The unique identifier of the corresponding input message."""
 
 
 class ArraysToArraysServiceStub(betterproto.ServiceStub):
