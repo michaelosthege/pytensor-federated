@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import uuid
 from typing import TYPE_CHECKING, AsyncIterator, Optional, Sequence, Type
 
 import grpclib
@@ -50,6 +51,7 @@ def _run_compute_func(
     # Encode results
     result = OutputArrays(
         items=[ndarray_from_numpy(np.asarray(o)) for o in outputs],
+        uuid=func_input.uuid,
     )
     return result
 
@@ -193,7 +195,9 @@ class ArraysToArraysServiceClient:
             Sequence of ``ndarray``s returned by the federated compute function.
         """
         # Encode inputs
-        input = InputArrays(items=[ndarray_from_numpy(np.asarray(i)) for i in inputs])
+        input = InputArrays(
+            items=[ndarray_from_numpy(np.asarray(i)) for i in inputs], uuid=str(uuid.uuid4())
+        )
 
         # Make the asynchronous calls to the remote server
         if use_stream:
@@ -202,6 +206,8 @@ class ArraysToArraysServiceClient:
             eval_task = self._client.evaluate(input)
         loop = asyncio.get_event_loop()
         output = loop.run_until_complete(eval_task)
+        if output.uuid != input.uuid:
+            raise Exception("Response does not correspond to the request.")
 
         # Decode outputs
         outputs = [ndarray_to_numpy(o) for o in output.items]
