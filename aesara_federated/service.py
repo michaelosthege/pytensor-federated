@@ -121,7 +121,8 @@ async def _streamed_evaluate(
     """Internal wrapper around async methods of the bidirectional stream."""
     await stream.send_message(input)
     response = await stream.recv_message()
-    assert response is not None
+    if response is None:
+        raise Exception("Received unexpected `None` response.")
     return response
 
 
