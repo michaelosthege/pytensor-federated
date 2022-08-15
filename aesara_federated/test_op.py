@@ -1,7 +1,6 @@
 import asyncio
 import logging
 import multiprocessing
-import platform
 import sys
 import time
 
@@ -11,7 +10,6 @@ import arviz
 import grpclib
 import numpy as np
 import pymc as pm
-import pytest
 import scipy
 from aesara.graph.basic import Apply, Variable
 
@@ -185,13 +183,6 @@ class TestLogpOp:
             p_server.join()
         pass
 
-    @pytest.mark.xfail(
-        condition=platform.system() == "Linux",
-        reason=(
-            "The combination of cloudpickle+fork used by PyMC re-uses the same stream across processes."
-            " This results in inputs/outputs being mixed-up between the gRPC clients."
-        ),
-    )
     def test_pymc_sampling_parallel(self):
         # Launch a blackbox loglikelihood on a child process.
         port = 9130
