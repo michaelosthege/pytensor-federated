@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   viewBox="0 0 621.13262 118.02152"
+   width="593.75488"
+   height="101.29719"
+   version="1.1"
+   id="svg126"
+   sodipodi:docname="arrays_to_arrays.svg"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)">
+  <metadata
+     id="metadata130">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="640"
+     inkscape:window-height="480"
+     id="namedview128"
+     showgrid="true"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:pagecheckerboard="true"
+     inkscape:zoom="3.766821"
+     inkscape:cx="230.51129"
+     inkscape:cy="-44.339328"
+     inkscape:current-layer="svg126"
+     inkscape:snap-center="true"
+     inkscape:snap-object-midpoints="true"
+     inkscape:snap-smooth-nodes="true"
+     inkscape:snap-intersection-paths="true"
+     inkscape:object-paths="true">
+    <inkscape:grid
+       type="xygrid"
+       id="grid961"
+       originx="0"
+       originy="0" />
+  </sodipodi:namedview>
+  <defs
+     id="defs4">
+    <marker
+       inkscape:stockid="TriangleOutM"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="TriangleOutM"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         id="path1084"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1.00000003pt;stroke-opacity:1"
+         transform="scale(0.4)"
+         inkscape:connector-curvature="0" />
+    </marker>
+    <style
+       id="style2">@import url('https://fonts.googleapis.com/css2?family=Caveat+Brush&amp;family=Source+Code+Pro&amp;family=Source+Sans+Pro&amp;family=Crimson+Pro&amp;display=block');</style>
+    <marker
+       inkscape:stockid="TriangleOutM"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="TriangleOutM-1"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         inkscape:connector-curvature="0"
+         id="path1084-1"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1.00000003pt;stroke-opacity:1"
+         transform="scale(0.4)" />
+    </marker>
+    <marker
+       inkscape:stockid="TriangleOutM"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="TriangleOutM-8"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         inkscape:connector-curvature="0"
+         id="path1084-6"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         style="fill:#009966;fill-opacity:1;fill-rule:evenodd;stroke:#009966;stroke-width:1.00000003pt;stroke-opacity:1"
+         transform="scale(0.4)" />
+    </marker>
+    <marker
+       inkscape:stockid="TriangleOutM"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="TriangleOutM-8-6"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         inkscape:connector-curvature="0"
+         id="path1084-6-7"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1.00000003pt;stroke-opacity:1"
+         transform="scale(0.4)" />
+    </marker>
+    <marker
+       inkscape:stockid="TriangleOutM"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="TriangleOutM-8-4"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         inkscape:connector-curvature="0"
+         id="path1084-6-0"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1.00000003pt;stroke-opacity:1"
+         transform="scale(0.4)" />
+    </marker>
+    <marker
+       inkscape:stockid="TriangleOutM"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="TriangleOutM-8-4-3"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         inkscape:connector-curvature="0"
+         id="path1084-6-0-3"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1.00000003pt;stroke-opacity:1"
+         transform="scale(0.4)" />
+    </marker>
+    <marker
+       inkscape:stockid="TriangleOutM"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="TriangleOutM-8-0"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         inkscape:connector-curvature="0"
+         id="path1084-6-79"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         style="fill:#009966;fill-opacity:1;fill-rule:evenodd;stroke:#009966;stroke-width:1.00000003pt;stroke-opacity:1"
+         transform="scale(0.4)" />
+    </marker>
+  </defs>
+  <path
+     style="fill:none;stroke:#000000;stroke-width:3.49530482;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#TriangleOutM-8-4-3)"
+     d="M 131.33553,76.123694 H 454.86997"
+     id="path937-8-0-5"
+     inkscape:connector-curvature="0"
+     sodipodi:nodetypes="cc" />
+  <g
+     id="g1022"
+     transform="translate(-10.834232,-10.633638)">
+    <g
+       style="text-align:center;text-anchor:middle;fill:#1d1d1d"
+       id="g12"
+       transform="translate(299.81306,55.886615)"
+       text-align="center">
+      <text
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:28px;font-family:Arial;-inkscape-font-specification:Arial;text-align:center;letter-spacing:-0.83999997"
+         id="text10"
+         x="-247.35745"
+         alignment-baseline="central"
+         text-align="center"
+         font-size="28px"
+         letter-spacing="-0.84"
+         y="-27.137743">
+        <tspan
+           id="tspan959"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Consolas;-inkscape-font-specification:Consolas">InputArrays</tspan>
+      </text>
+    </g>
+    <text
+       id="text949"
+       y="53.742722"
+       x="-26.353874"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:14.57127476px;line-height:1.25;font-family:'Segoe UI Symbol';-inkscape-font-specification:'Segoe UI Symbol';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.60713649"
+       xml:space="preserve"><tspan
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Consolas;-inkscape-font-specification:'Consolas Bold';stroke-width:0.60713649"
+         y="53.742722"
+         x="-26.353874"
+         id="tspan947"
+         sodipodi:role="line">dtype    shape</tspan><tspan
+         id="tspan957"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Consolas;-inkscape-font-specification:Consolas;stroke-width:0.60713649"
+         y="72.438812"
+         x="-26.353874"
+         sodipodi:role="line">float32  ()</tspan><tspan
+         id="tspan951"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Consolas;-inkscape-font-specification:Consolas;stroke-width:0.60713649"
+         y="91.134903"
+         x="-26.353874"
+         sodipodi:role="line">int8     (3,)</tspan><tspan
+         id="tspan953"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Consolas;-inkscape-font-specification:Consolas;stroke-width:0.60713649"
+         y="109.83099"
+         x="-26.353874"
+         sodipodi:role="line">float64  (1,2,3)</tspan><tspan
+         id="tspan955"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Consolas;-inkscape-font-specification:Consolas;stroke-width:0.60713649"
+         y="128.52708"
+         x="-26.353874"
+         sodipodi:role="line">...</tspan></text>
+  </g>
+  <g
+     id="g1011"
+     transform="translate(-10.834232,-8.3798286)">
+    <g
+       style="text-align:center;text-anchor:middle;fill:#1d1d1d"
+       id="g12-0"
+       transform="translate(827.78306,53.632806)"
+       text-align="center">
+      <text
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:28px;font-family:Arial;-inkscape-font-specification:Arial;text-align:center;letter-spacing:-0.83999997"
+         id="text10-0"
+         x="-247.35745"
+         alignment-baseline="central"
+         text-align="center"
+         font-size="28px"
+         letter-spacing="-0.84"
+         y="-27.137743">
+        <tspan
+           id="tspan959-8"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Consolas;-inkscape-font-specification:Consolas">OutputArrays</tspan>
+      </text>
+    </g>
+    <text
+       id="text949-1"
+       y="51.488918"
+       x="492.75293"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:14.57127476px;line-height:1.25;font-family:'Segoe UI Symbol';-inkscape-font-specification:'Segoe UI Symbol';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.60713649"
+       xml:space="preserve"><tspan
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Consolas;-inkscape-font-specification:'Consolas Bold';stroke-width:0.60713649"
+         y="51.488918"
+         x="492.75293"
+         id="tspan947-2"
+         sodipodi:role="line">dtype    shape</tspan><tspan
+         id="tspan957-3"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Consolas;-inkscape-font-specification:Consolas;stroke-width:0.60713649"
+         y="70.185013"
+         x="492.75293"
+         sodipodi:role="line">float32  (3,)</tspan><tspan
+         id="tspan953-3"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Consolas;-inkscape-font-specification:Consolas;stroke-width:0.60713649"
+         y="88.881104"
+         x="492.75293"
+         sodipodi:role="line">str      (3,2)</tspan><tspan
+         id="tspan955-7"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Consolas;-inkscape-font-specification:Consolas;stroke-width:0.60713649"
+         y="107.57719"
+         x="492.75293"
+         sodipodi:role="line">...</tspan></text>
+  </g>
+  <text
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:28px;font-family:Arial;-inkscape-font-specification:Arial;text-align:center;letter-spacing:-0.83999997;text-anchor:middle;fill:#1d1d1d;stroke-width:1"
+     id="text10-3"
+     x="286.26678"
+     alignment-baseline="central"
+     text-align="center"
+     font-size="28px"
+     letter-spacing="-0.84"
+     y="65.224632">
+    <tspan
+       id="tspan959-4"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Consolas;-inkscape-font-specification:Consolas;stroke-width:1">ArraysToArraysService</tspan>
+  </text>
+</svg>
