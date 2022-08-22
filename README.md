@@ -51,7 +51,7 @@ Different sub-graphs of this example could be wrapped by an `ArraysToArraysServi
 
 ![](docs/theta_to_LL.svg)
 
-If the model everything is differentiable, one could even return gradients.
+If the entire model is differentiable, one can even return gradients.
 For example, with a linear model: `[slope, intercept] -> [LL, dLL_dslope, dLL_dintercept]`.
 
 The role of Aesara here is purely technical:
