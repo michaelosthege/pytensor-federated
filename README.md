@@ -24,7 +24,7 @@ python demo_model.py
 `aesara-federated` is designed to be a very generalizable framework for federated computing with gRPC, but it comes with implementations for Aesara, and specifically for use cases of Bayesian inference.
 This is reflected in the actual implementation, where the most basic gRPC service implementation -- the `ArraysToArraysService` -- is wrapped by a few implementation flavors, specifically for common use cases in Bayesian inference.
 
-At the core, everything is built around an `ArraysToArrays` gRPC service, which any number of (NumPy) arrays as parameters, and returns any number of (NumPy) arrays as outputs.
+At the core, everything is built around an `ArraysToArrays` gRPC service, which takes any number of (NumPy) arrays as parameters, and returns any number of (NumPy) arrays as outputs.
 The arrays can have arbitrary `dtype` or `shape`, as long as the buffer interface is supported (meaning `dtype=object` doesn't work, but `datetime` dtypes are ok).
 
 ![](docs/arrays_to_arrays.svg)
