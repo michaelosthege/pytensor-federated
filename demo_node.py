@@ -1,3 +1,4 @@
+import argparse
 import asyncio
 import logging
 from typing import Sequence, Tuple
@@ -43,7 +44,7 @@ class LinearModelBlackbox:
         return logp, grads
 
 
-async def run_node(port: int = 50051):
+async def run_node(*, bind: str = "0.0.0.0", port: int = 50051):
     _log.info("Generating a secret dataset")
     x = np.linspace(0, 10, 10)
     sigma = 0.4
@@ -60,14 +61,23 @@ async def run_node(port: int = 50051):
         data_y=y,
         sigma=sigma,
     )
-    _log.info("Starting the service on port %i", port)
+    _log.info("Binding the service to %s on port %i", bind, port)
     service = ArraysToArraysService(wrap_logp_grad_func(model_fn))
     server = grpclib.server.Server([service])
-    await server.start("127.0.0.1", port)
+    await server.start(bind, port)
     await server.wait_closed()
     return
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Runs a toy model as a worker node.")
+    parser.add_argument(
+        "--bind", default="0.0.0.0", help="IP address to run the ArraysToArrays gRPC service on."
+    )
+    parser.add_argument(
+        "--port", default=50051, help="Port number for the ArraysToArrays gRPC service."
+    )
+    args, _ = parser.parse_known_args()
+
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(run_node())
+    loop.run_until_complete(run_node(bind=args.bind, port=int(args.port)))
