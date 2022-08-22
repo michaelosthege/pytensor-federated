@@ -7,9 +7,9 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   viewBox="0 0 633.94236 140.97729"
-   width="606"
-   height="121"
+   viewBox="0 0 1046.1095 232.63579"
+   width="1000"
+   height="199.66997"
    version="1.1"
    id="svg126"
    sodipodi:docname="distributed.svg"
@@ -44,9 +44,9 @@
      fit-margin-right="0"
      fit-margin-bottom="0"
      inkscape:pagecheckerboard="true"
-     inkscape:zoom="2.6635447"
-     inkscape:cx="303.42963"
-     inkscape:cy="56.963614"
+     inkscape:zoom="1.8834106"
+     inkscape:cx="513.6694"
+     inkscape:cy="-94.247341"
      inkscape:current-layer="svg126"
      inkscape:snap-center="true"
      inkscape:snap-object-midpoints="true"
@@ -56,7 +56,7 @@
     <inkscape:grid
        type="xygrid"
        id="grid961"
-       originx="5.7536013"
+       originx="-15.721097"
        originy="152.04576" />
   </sodipodi:namedview>
   <defs
@@ -170,15 +170,15 @@
     </marker>
   </defs>
   <rect
-     style="opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:1.16510165;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:fill markers stroke"
+     style="opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:1.92260993;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:fill markers stroke"
      id="rect907"
-     width="704.88647"
-     height="139.81219"
-     x="-34.99609"
-     y="0.58255082" />
+     width="1163.179"
+     height="230.71318"
+     x="-58.534721"
+     y="0.96130496" />
   <g
      id="g3296"
-     transform="translate(64.663154,-134.91548)">
+     transform="matrix(1.650165,0,0,1.650165,105.91948,-222.6328)">
     <rect
        y="141.32355"
        x="325.85544"
