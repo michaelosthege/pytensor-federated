@@ -51,6 +51,7 @@ def run_service(port: int, compute_func: signatures.ComputeFunc):
 
     async def run_server():
         a2a_service = service.ArraysToArraysService(compute_func)
+        assert a2a_service._n_clients == 0
         server = grpclib.server.Server([a2a_service])
         await server.start("127.0.0.1", port)
         await server.wait_closed()

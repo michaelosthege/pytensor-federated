@@ -66,6 +66,7 @@ class ArraysToArraysService(ArraysToArraysServiceBase):
         compute_func: ComputeFunc,
     ) -> None:
         self._compute_func = compute_func
+        self._n_clients = 0
         super().__init__()
 
     async def evaluate(
@@ -78,9 +79,11 @@ class ArraysToArraysService(ArraysToArraysServiceBase):
         self, input_arrays_iterator: AsyncIterator[InputArrays]
     ) -> AsyncIterator[OutputArrays]:
         _log.info("Evaluation stream opened")
+        self._n_clients += 1
         async for input in input_arrays_iterator:
             yield _run_compute_func(input, self._compute_func)
         _log.info("Evaluation stream closed")
+        self._n_clients -= 1
 
 
 async def start_bidirectional_stream(
