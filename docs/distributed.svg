@@ -1,0 +1,399 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   viewBox="0 0 1046.1095 232.63579"
+   width="1000"
+   height="199.66997"
+   version="1.1"
+   id="svg126"
+   sodipodi:docname="distributed.svg"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)">
+  <metadata
+     id="metadata130">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="640"
+     inkscape:window-height="480"
+     id="namedview128"
+     showgrid="true"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:pagecheckerboard="true"
+     inkscape:zoom="1.8834106"
+     inkscape:cx="513.6694"
+     inkscape:cy="-94.247341"
+     inkscape:current-layer="svg126"
+     inkscape:snap-center="true"
+     inkscape:snap-object-midpoints="true"
+     inkscape:snap-smooth-nodes="true"
+     inkscape:snap-intersection-paths="true"
+     inkscape:object-paths="true">
+    <inkscape:grid
+       type="xygrid"
+       id="grid961"
+       originx="-15.721097"
+       originy="152.04576" />
+  </sodipodi:namedview>
+  <defs
+     id="defs4">
+    <marker
+       inkscape:stockid="TriangleOutM"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="TriangleOutM"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         id="path1084"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1.00000003pt;stroke-opacity:1"
+         transform="scale(0.4)"
+         inkscape:connector-curvature="0" />
+    </marker>
+    <style
+       id="style2">@import url('https://fonts.googleapis.com/css2?family=Caveat+Brush&amp;family=Source+Code+Pro&amp;family=Source+Sans+Pro&amp;family=Crimson+Pro&amp;display=block');</style>
+    <marker
+       inkscape:stockid="TriangleOutM"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="TriangleOutM-1"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         inkscape:connector-curvature="0"
+         id="path1084-1"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1.00000003pt;stroke-opacity:1"
+         transform="scale(0.4)" />
+    </marker>
+    <marker
+       inkscape:stockid="TriangleOutM"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="TriangleOutM-8"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         inkscape:connector-curvature="0"
+         id="path1084-6"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         style="fill:#009966;fill-opacity:1;fill-rule:evenodd;stroke:#009966;stroke-width:1.00000003pt;stroke-opacity:1"
+         transform="scale(0.4)" />
+    </marker>
+    <marker
+       inkscape:stockid="TriangleOutM"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="TriangleOutM-8-6"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         inkscape:connector-curvature="0"
+         id="path1084-6-7"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1.00000003pt;stroke-opacity:1"
+         transform="scale(0.4)" />
+    </marker>
+    <marker
+       inkscape:stockid="TriangleOutM"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="TriangleOutM-8-4"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         inkscape:connector-curvature="0"
+         id="path1084-6-0"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1.00000003pt;stroke-opacity:1"
+         transform="scale(0.4)" />
+    </marker>
+    <marker
+       inkscape:stockid="TriangleOutM"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="TriangleOutM-8-4-3"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         inkscape:connector-curvature="0"
+         id="path1084-6-0-3"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1.00000003pt;stroke-opacity:1"
+         transform="scale(0.4)" />
+    </marker>
+    <marker
+       inkscape:stockid="TriangleOutM"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="TriangleOutM-8-0"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         inkscape:connector-curvature="0"
+         id="path1084-6-79"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         style="fill:#009966;fill-opacity:1;fill-rule:evenodd;stroke:#009966;stroke-width:1.00000003pt;stroke-opacity:1"
+         transform="scale(0.4)" />
+    </marker>
+  </defs>
+  <rect
+     style="opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:1.92260993;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:fill markers stroke"
+     id="rect907"
+     width="1163.179"
+     height="230.71318"
+     x="-58.534721"
+     y="0.96130496" />
+  <g
+     id="g3296"
+     transform="matrix(1.650165,0,0,1.650165,105.91948,-222.6328)">
+    <rect
+       y="141.32355"
+       x="325.85544"
+       height="128.16119"
+       width="273.79886"
+       id="rect3191-3"
+       style="opacity:1;fill:none;fill-opacity:1;fill-rule:nonzero;stroke:#023d6b;stroke-width:3.49530482;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:fill markers stroke" />
+    <g
+       style="stroke:#009966"
+       transform="translate(-8.8130797,-6.6479356)"
+       id="g2267">
+      <rect
+         style="opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#009966;stroke-width:3.49530482;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:fill markers stroke"
+         id="rect2258"
+         width="238.47517"
+         height="64.026413"
+         x="25.916569"
+         y="177.09903" />
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8.74923325px;line-height:1.25;font-family:'Segoe UI Symbol';-inkscape-font-specification:'Segoe UI Symbol';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.3645514"
+         x="31.741184"
+         y="188.96512"
+         id="text962-2"><tspan
+           sodipodi:role="line"
+           id="tspan960-6"
+           x="31.741184"
+           y="188.96512"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Consolas;-inkscape-font-specification:Consolas;fill:#000000;stroke:none;stroke-width:0.3645514">simulate(*inputs) {</tspan><tspan
+           sodipodi:role="line"
+           x="31.741184"
+           y="200.19107"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Consolas;-inkscape-font-specification:Consolas;fill:#000000;stroke:none;stroke-width:0.3645514"
+           id="tspan2254">    sim_task = grpc_client.evaluate(*inputs)</tspan><tspan
+           sodipodi:role="line"
+           x="31.741184"
+           y="211.41702"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Consolas;-inkscape-font-specification:Consolas;fill:#000000;stroke:none;stroke-width:0.3645514"
+           id="tspan2256">    outputs = await sim_task</tspan><tspan
+           sodipodi:role="line"
+           x="31.741184"
+           y="222.64297"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Consolas;-inkscape-font-specification:Consolas;fill:#000000;stroke:none;stroke-width:0.3645514"
+           id="tspan964-9">    return outputs</tspan><tspan
+           sodipodi:role="line"
+           x="31.741184"
+           y="233.86894"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Consolas;-inkscape-font-specification:Consolas;fill:#000000;stroke:none;stroke-width:0.3645514"
+           id="tspan966-4">}</tspan></text>
+    </g>
+    <g
+       transform="translate(99.03364,-17.476525)"
+       id="g2228">
+      <rect
+         style="opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#009966;stroke-width:3.51095223;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:fill markers stroke"
+         id="rect886"
+         width="156.49335"
+         height="104.85915"
+         x="233.44267"
+         y="170.4511" />
+      <text
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.43292046px;font-family:Arial;-inkscape-font-specification:Arial;text-align:center;letter-spacing:-0.3429876;text-anchor:middle;fill:#1d1d1d;stroke-width:0.40831858"
+         id="text10-3-9"
+         x="320.43634"
+         alignment-baseline="central"
+         text-align="center"
+         font-size="28px"
+         letter-spacing="-0.84"
+         y="190.18272">
+        <tspan
+           id="tspan959-4-9"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Consolas;-inkscape-font-specification:Consolas;stroke-width:0.40831858">ArraysToArraysService</tspan>
+      </text>
+      <g
+         id="g975"
+         transform="translate(5.0087247,-0.89061604)"
+         style="fill:#000000;stroke:#ebebeb">
+        <path
+           style="opacity:1;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#ebebeb;stroke-width:3.49530482;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:fill markers stroke"
+           d="M 270.57788,210.04016 H 390.7528 v -9.57091 h 93.20813 v 75.73161 H 390.7528 V 254.9669 H 270.57788 Z"
+           id="rect968"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="ccccccccc" />
+        <text
+           id="text962"
+           y="223.13548"
+           x="277.0733"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8.74923325px;line-height:1.25;font-family:'Segoe UI Symbol';-inkscape-font-specification:'Segoe UI Symbol';letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:#ebebeb;stroke-width:0.3645514"
+           xml:space="preserve"><tspan
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Consolas;-inkscape-font-specification:Consolas;fill:#ffffff;stroke:#ebebeb;stroke-width:0.3645514"
+             y="223.13548"
+             x="277.0733"
+             id="tspan960"
+             sodipodi:role="line">simulate(*inputs) {</tspan><tspan
+             id="tspan964"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Consolas;-inkscape-font-specification:Consolas;fill:#ffffff;stroke:#ebebeb;stroke-width:0.3645514"
+             y="234.36143"
+             x="277.0733"
+             sodipodi:role="line">    return outputs</tspan><tspan
+             id="tspan966"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Consolas;-inkscape-font-specification:Consolas;fill:#ffffff;stroke:#ebebeb;stroke-width:0.3645514"
+             y="245.58739"
+             x="277.0733"
+             sodipodi:role="line">}</tspan></text>
+      </g>
+      <path
+         style="fill:none;stroke:#009966;stroke-width:2.33020329;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#TriangleOutM-8)"
+         d="m 139.43916,208.89945 h 46.60407 v -9.32081 h 162.57258 v 8.44525"
+         id="path977"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="ccccc" />
+      <path
+         style="fill:none;stroke:#009966;stroke-width:2.33020329;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#TriangleOutM-8-0)"
+         d="m 348.61581,240.35719 v 23.30204 H 186.04323 V 220.55047 H 69.533063"
+         id="path977-7"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="ccccc" />
+      <g
+         id="g933"
+         transform="translate(141.63602,-26.760719)"
+         style="fill:#ffffff;stroke:#009966">
+        <rect
+           ry="17.476521"
+           y="197.21181"
+           x="73.534752"
+           height="104.85914"
+           width="34.953041"
+           id="rect928"
+           style="opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#009966;stroke-width:3.49530482;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:fill markers stroke" />
+        <text
+           transform="rotate(-90)"
+           id="text926"
+           y="95.380417"
+           x="-287.95898"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:15.03098202px;line-height:1.25;font-family:'Segoe UI Symbol';-inkscape-font-specification:'Segoe UI Symbol';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.62629098"
+           xml:space="preserve"><tspan
+             style="fill:#000000;stroke:none;stroke-width:0.62629098"
+             y="95.380417"
+             x="-287.95898"
+             id="tspan924"
+             sodipodi:role="line">gRPC server</tspan></text>
+      </g>
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.01858044px;line-height:1.25;font-family:'Segoe UI Symbol';-inkscape-font-specification:'Segoe UI Symbol';letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.41744083"
+         x="108.88175"
+         y="480.30554"
+         id="text2050"
+         transform="rotate(-45)"><tspan
+           sodipodi:role="line"
+           id="tspan2048"
+           x="108.88175"
+           y="480.30554"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Consolas;-inkscape-font-specification:Consolas;fill:#ffffff;stroke-width:0.41744083">Simulation</tspan><tspan
+           sodipodi:role="line"
+           x="108.88175"
+           y="493.16016"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Consolas;-inkscape-font-specification:Consolas;fill:#ffffff;stroke-width:0.41744083"
+           id="tspan2052">   black box</tspan></text>
+    </g>
+    <path
+       style="opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#ebebeb;stroke-width:3.49530482;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:fill markers stroke"
+       d="M 13.297875,164.62559 H 116.13713 V 152.97457 H -81.930153 V 257.83372 H 116.13713 V 240.35719 H 13.297875 Z"
+       id="rect968-0"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccccccc" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.01858044px;line-height:1.25;font-family:'Segoe UI Symbol';-inkscape-font-specification:'Segoe UI Symbol';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.4174408"
+       x="-214.95003"
+       y="121.5588"
+       id="text2050-1"
+       transform="rotate(-45)"><tspan
+         sodipodi:role="line"
+         id="tspan2048-5"
+         x="-214.95003"
+         y="121.5588"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Consolas;-inkscape-font-specification:Consolas;fill:#000000;stroke-width:0.4174408">MCMC/optimization</tspan><tspan
+         sodipodi:role="line"
+         x="-214.95003"
+         y="134.41342"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Consolas;-inkscape-font-specification:Consolas;fill:#000000;stroke-width:0.4174408"
+         id="tspan2052-7">    framework</tspan></text>
+    <rect
+       y="141.32355"
+       x="-93.581169"
+       height="128.16119"
+       width="355.35602"
+       id="rect3191-3-9"
+       style="opacity:1;fill:none;fill-opacity:1;fill-rule:nonzero;stroke:#023d6b;stroke-width:3.49530482;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:fill markers stroke" />
+    <text
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.4329195px;font-family:Arial;-inkscape-font-specification:Arial;text-align:center;letter-spacing:-0.3429876;text-anchor:middle;fill:#023d6b;stroke-width:0.40831855"
+       id="text10-3-9-3"
+       x="564.77942"
+       alignment-baseline="central"
+       text-align="center"
+       font-size="28px"
+       letter-spacing="-0.84"
+       y="155.52855">
+      <tspan
+         id="tspan959-4-9-9"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Consolas;-inkscape-font-specification:Consolas;fill:#023d6b;stroke-width:0.40831855">Computer 2</tspan>
+    </text>
+    <text
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.4329195px;font-family:Arial;-inkscape-font-specification:Arial;text-align:center;letter-spacing:-0.3429876;text-anchor:middle;fill:#023d6b;stroke-width:0.40831855"
+       id="text10-3-9-3-4"
+       x="226.93065"
+       alignment-baseline="central"
+       text-align="center"
+       font-size="28px"
+       letter-spacing="-0.84"
+       y="155.52855">
+      <tspan
+         id="tspan959-4-9-9-8"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Consolas;-inkscape-font-specification:Consolas;fill:#023d6b;stroke-width:0.40831855">Computer 1</tspan>
+    </text>
+  </g>
+</svg>
