@@ -2,3 +2,4 @@ betterproto==2.0.0b5
 black
 isort
 numpy
+psutil

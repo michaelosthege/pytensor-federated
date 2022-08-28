@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING, AsyncIterator, Dict, Optional, Sequence, Type
 
 import grpclib
 import numpy as np
+import psutil
 from betterproto import Message, ServiceStub
 from grpclib.client import Channel, Stream
 from grpclib.metadata import Deadline
@@ -16,6 +17,8 @@ from .npproto.utils import ndarray_from_numpy, ndarray_to_numpy
 from .rpc import (
     ArraysToArraysServiceBase,
     ArraysToArraysServiceStub,
+    GetLoadParams,
+    GetLoadResult,
     InputArrays,
     OutputArrays,
 )
@@ -67,7 +70,19 @@ class ArraysToArraysService(ArraysToArraysServiceBase):
     ) -> None:
         self._compute_func = compute_func
         self._n_clients = 0
+        # Start monitoring of CPU load average
+        self.determine_load()
         super().__init__()
+
+    def determine_load(self) -> GetLoadResult:
+        """Determines the current system load."""
+        # We're only interested in the 1-minute average
+        load_1, _, _ = psutil.getloadavg()
+        return GetLoadResult(
+            n_clients=self._n_clients,
+            percent_cpu=load_1 / psutil.cpu_count() * 100,
+            percent_ram=psutil.virtual_memory().percent,
+        )
 
     async def evaluate(
         self,
@@ -84,6 +99,9 @@ class ArraysToArraysService(ArraysToArraysServiceBase):
             yield _run_compute_func(input, self._compute_func)
         _log.info("Evaluation stream closed")
         self._n_clients -= 1
+
+    async def get_load(self, get_load_params: GetLoadParams) -> GetLoadResult:
+        return self.determine_load()
 
 
 async def start_bidirectional_stream(

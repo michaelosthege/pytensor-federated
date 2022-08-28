@@ -48,6 +48,27 @@ class OutputArrays(betterproto.Message):
     """The unique identifier of the corresponding input message."""
 
 
+@dataclass(eq=False, repr=False)
+class GetLoadParams(betterproto.Message):
+    """Input message for a GetLoad query"""
+
+    pass
+
+
+@dataclass(eq=False, repr=False)
+class GetLoadResult(betterproto.Message):
+    """Result messae of a GetLoad query"""
+
+    n_clients: int = betterproto.int32_field(1)
+    """Number of currently connected clients."""
+
+    percent_cpu: float = betterproto.float_field(2)
+    """Current system-wide CPU load average."""
+
+    percent_ram: float = betterproto.float_field(3)
+    """Current percentage of used RAM."""
+
+
 class ArraysToArraysServiceStub(betterproto.ServiceStub):
     async def evaluate(
         self,
@@ -87,6 +108,23 @@ class ArraysToArraysServiceStub(betterproto.ServiceStub):
         ):
             yield response
 
+    async def get_load(
+        self,
+        get_load_params: "GetLoadParams",
+        *,
+        timeout: Optional[float] = None,
+        deadline: Optional["Deadline"] = None,
+        metadata: Optional["MetadataLike"] = None
+    ) -> "GetLoadResult":
+        return await self._unary_unary(
+            "/ArraysToArraysService/GetLoad",
+            get_load_params,
+            GetLoadResult,
+            timeout=timeout,
+            deadline=deadline,
+            metadata=metadata,
+        )
+
 
 class ArraysToArraysServiceBase(ServiceBase):
     async def evaluate(self, input_arrays: "InputArrays") -> "OutputArrays":
@@ -95,6 +133,9 @@ class ArraysToArraysServiceBase(ServiceBase):
     async def evaluate_stream(
         self, input_arrays_iterator: AsyncIterator["InputArrays"]
     ) -> AsyncIterator["OutputArrays"]:
+        raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
+
+    async def get_load(self, get_load_params: "GetLoadParams") -> "GetLoadResult":
         raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
 
     async def __rpc_evaluate(
@@ -114,6 +155,13 @@ class ArraysToArraysServiceBase(ServiceBase):
             request,
         )
 
+    async def __rpc_get_load(
+        self, stream: "grpclib.server.Stream[GetLoadParams, GetLoadResult]"
+    ) -> None:
+        request = await stream.recv_message()
+        response = await self.get_load(request)
+        await stream.send_message(response)
+
     def __mapping__(self) -> Dict[str, grpclib.const.Handler]:
         return {
             "/ArraysToArraysService/Evaluate": grpclib.const.Handler(
@@ -127,5 +175,11 @@ class ArraysToArraysServiceBase(ServiceBase):
                 grpclib.const.Cardinality.STREAM_STREAM,
                 InputArrays,
                 OutputArrays,
+            ),
+            "/ArraysToArraysService/GetLoad": grpclib.const.Handler(
+                self.__rpc_get_load,
+                grpclib.const.Cardinality.UNARY_UNARY,
+                GetLoadParams,
+                GetLoadResult,
             ),
         }
