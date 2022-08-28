@@ -18,9 +18,24 @@ message OutputArrays {
     string uuid = 2;
 }
 
+// Input message for a GetLoad query
+message GetLoadParams {}
+
+// Result messae of a GetLoad query
+message GetLoadResult {
+    // Number of currently connected clients.
+    int32 n_clients = 1;
+    // Current system-wide CPU load average.
+    float percent_cpu = 2;
+    // Current percentage of used RAM.
+    float percent_ram = 3;
+}
+
 // The most generic type of compute operation,
 // computing NumPy arrays from NumPy arrays.
 service ArraysToArraysService {
     rpc Evaluate(InputArrays) returns (OutputArrays);
     rpc EvaluateStream(stream InputArrays) returns (stream OutputArrays);
+    // Get the current load of the worker node.
+    rpc GetLoad(GetLoadParams) returns (GetLoadResult);
 }

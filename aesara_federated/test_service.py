@@ -3,6 +3,7 @@ import multiprocessing
 import platform
 import time
 from typing import Sequence
+from unittest import mock
 
 import grpclib
 import numpy as np
@@ -80,6 +81,27 @@ class ProductTester:
 
     def run(self, n: int):
         return run_product_queries(self.client, n)
+
+
+@mock.patch("psutil.getloadavg", return_value=[0.1, 0.2, 0.3])
+@mock.patch("psutil.cpu_count", return_value=3)
+def test_get_load(mock_getloadavg, mock_cpu_count):
+    a2a_service = service.ArraysToArraysService(product_func)
+
+    # The load mus tbe determined once at startup
+    # to make psutil.getloadavg start monitoring.
+    mock_getloadavg.assert_called_once_with()
+    mock_cpu_count.assert_called_once_with()
+
+    # Number of clients and CPU load are set to known values
+    # through the mocks, and the next line.
+    a2a_service._n_clients = 3
+    load = a2a_service.determine_load()
+    assert load.n_clients == 3
+    assert load.percent_cpu == 0.1 / 3 * 100
+    # RAM load is not mocked
+    assert 0 < load.percent_ram < 100
+    pass
 
 
 @pytest.mark.parametrize("eval_on_main", [False, True])
