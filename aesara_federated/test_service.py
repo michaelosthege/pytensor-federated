@@ -141,6 +141,42 @@ def test_get_loads_async():
     pass
 
 
+def test_client_loadbalancing():
+    server_processes = [
+        multiprocessing.Process(target=run_service, args=[9500 + p, product_func, nc])
+        for p, nc in enumerate([3, 4, 2])
+    ]
+    try:
+        for sp in server_processes:
+            sp.start()
+        time.sleep(5)
+
+        client = service.ArraysToArraysServiceClient(
+            hosts_and_ports=[
+                ("127.0.0.1", 9499),  # this one is offline
+                ("127.0.0.1", 9500),
+                ("127.0.0.1", 9501),
+                ("127.0.0.1", 9502),  # this one reports the fewest n_clients
+            ]
+        )
+        # Use the client to trigger connection setup
+        result = client.evaluate(np.array(2), np.array(3))
+        assert isinstance(result, list)
+        assert isinstance(result[0], np.ndarray)
+        assert result[0] == 6
+        # Assert which server it connected to
+        cid = service.thread_pid_id(client)
+        assert cid in service._privates
+        privs = service._privates[cid]
+        assert privs.channel._port == "9502"
+    finally:
+        # Always stop the server again
+        for sp in server_processes:
+            sp.terminate()
+            sp.join()
+    pass
+
+
 @pytest.mark.parametrize("eval_on_main", [False, True])
 @pytest.mark.parametrize("mp_start_method", ["spawn", "fork"])
 def test_client_multiprocessing(eval_on_main, mp_start_method):
