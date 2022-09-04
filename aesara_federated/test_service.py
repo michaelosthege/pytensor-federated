@@ -11,7 +11,7 @@ import pytest
 
 from aesara_federated import service, signatures
 from aesara_federated.npproto.utils import ndarray_from_numpy, ndarray_to_numpy
-from aesara_federated.rpc import InputArrays, OutputArrays
+from aesara_federated.rpc import GetLoadResult, InputArrays, OutputArrays
 
 
 def test_compute_function():
@@ -47,12 +47,14 @@ def product_func(*inputs: Sequence[np.ndarray]) -> Sequence[np.ndarray]:
     return (np.prod(inputs),)
 
 
-def run_service(port: int, compute_func: signatures.ComputeFunc):
+def run_service(port: int, compute_func: signatures.ComputeFunc, n_clients: int = 0):
     """Serve a compute_func in a local gRPC server"""
 
     async def run_server():
         a2a_service = service.ArraysToArraysService(compute_func)
-        assert a2a_service._n_clients == 0
+        # Override the number of clients for testing purposes
+        a2a_service._n_clients = n_clients
+
         server = grpclib.server.Server([a2a_service])
         await server.start("127.0.0.1", port)
         await server.wait_closed()
@@ -85,7 +87,7 @@ class ProductTester:
 
 @mock.patch("psutil.getloadavg", return_value=[0.1, 0.2, 0.3])
 @mock.patch("psutil.cpu_count", return_value=3)
-def test_get_load(mock_getloadavg, mock_cpu_count):
+def test_determine_load(mock_getloadavg, mock_cpu_count):
     a2a_service = service.ArraysToArraysService(product_func)
 
     # The load mus tbe determined once at startup
@@ -101,6 +103,41 @@ def test_get_load(mock_getloadavg, mock_cpu_count):
     assert load.percent_cpu == 0.1 / 3 * 100
     # RAM load is not mocked
     assert 0 < load.percent_ram < 100
+    pass
+
+
+def test_get_loads_async():
+    server_processes = [
+        multiprocessing.Process(target=run_service, args=[9500 + p, product_func, nc])
+        for p, nc in enumerate([3, 4, 2])
+    ]
+    try:
+        for sp in server_processes:
+            sp.start()
+        time.sleep(5)
+
+        loads_task = service.get_loads_async(
+            [
+                ("127.0.0.1", 9499),  # this one is offline
+                ("127.0.0.1", 9500),
+                ("127.0.0.1", 9501),
+                ("127.0.0.1", 9502),
+            ]
+        )
+        loop = asyncio.get_event_loop()
+        loads = loop.run_until_complete(loads_task)
+        assert isinstance(loads, list)
+        assert loads[0] is None
+        for l in loads[1:]:
+            assert isinstance(l, GetLoadResult)
+        assert loads[1].n_clients == 3
+        assert loads[2].n_clients == 4
+        assert loads[3].n_clients == 2
+    finally:
+        # Always stop the server again
+        for sp in server_processes:
+            sp.terminate()
+            sp.join()
     pass
 
 
