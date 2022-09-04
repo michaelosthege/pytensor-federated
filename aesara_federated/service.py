@@ -3,7 +3,18 @@ import logging
 import os
 import threading
 import uuid
-from typing import TYPE_CHECKING, AsyncIterator, Dict, Optional, Sequence, Type
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    AsyncIterator,
+    Coroutine,
+    Dict,
+    List,
+    Optional,
+    Sequence,
+    Tuple,
+    Type,
+)
 
 import grpclib
 import numpy as np
@@ -145,6 +156,39 @@ async def _streamed_evaluate(
     if response is None:
         raise Exception("Received unexpected `None` response.")
     return response
+
+
+async def get_loads_async(
+    hosts_and_ports: Sequence[Tuple[str, int]], *, timeout: float = 2
+) -> Sequence[Optional[GetLoadResult]]:
+    """Retrieve load information from all servers that respond within a timeout.
+
+    Parameters
+    ----------
+    hosts_and_ports : list of (host, port) tuples, optional
+        List of hostnames and port number of ArraysToArrays gRPC servers.
+
+    Returns
+    -------
+    loads
+        ``GetLoadResult`` objects or ``None`` for each server.
+    """
+    # Asynchronously get the current load information for each server
+    load_tasks: List[Coroutine[Any, Any, GetLoadResult]] = []
+    for host, port in hosts_and_ports:
+        channel = Channel(host, port)
+        client = ArraysToArraysServiceStub(channel)
+        load_tasks.append(client.get_load(GetLoadParams(), timeout=timeout))
+
+    # Complete the asynchronous load queries
+    loads: List[Optional[GetLoadResult]] = []
+    for load_task in load_tasks:
+        try:
+            loads.append(await load_task)
+        except (ConnectionRefusedError, asyncio.exceptions.TimeoutError):
+            loads.append(None)
+
+    return loads
 
 
 class ClientPrivates:
