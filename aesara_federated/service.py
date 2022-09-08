@@ -296,6 +296,13 @@ class ArraysToArraysServiceClient:
         return self.evaluate(*inputs)
 
     def evaluate(self, *inputs: Sequence[np.ndarray], use_stream=True) -> Sequence[np.ndarray]:
+        loop = asyncio.get_event_loop()
+        eval_coro = self.evaluate_async(*inputs)
+        return loop.run_until_complete(eval_coro)
+
+    async def evaluate_async(
+        self, *inputs: Sequence[np.ndarray], use_stream=True
+    ) -> Sequence[np.ndarray]:
         """Evaluate the federated compute function on inputs.
 
         Parameters
@@ -311,8 +318,6 @@ class ArraysToArraysServiceClient:
         *outputs
             Sequence of ``ndarray``s returned by the federated compute function.
         """
-        loop = asyncio.get_event_loop()
-
         # Encode inputs
         input = InputArrays(
             items=[ndarray_from_numpy(np.asarray(i)) for i in inputs], uuid=str(uuid.uuid4())
@@ -323,18 +328,18 @@ class ArraysToArraysServiceClient:
         if not _id in _privates:
             _log.debug(f"Connecting client {_id}")
             if self._hosts_and_ports:
-                connect_task = ClientPrivates.connect_balanced(self._hosts_and_ports)
+                connect_coro = ClientPrivates.connect_balanced(self._hosts_and_ports)
             else:
-                connect_task = ClientPrivates.connect(self._host, self._port)
-            _privates[_id] = loop.run_until_complete(connect_task)
+                connect_coro = ClientPrivates.connect(self._host, self._port)
+            _privates[_id] = await connect_coro
         priv = _privates[_id]
 
         # Make the asynchronous calls to the remote server
         if use_stream:
-            eval_task = _streamed_evaluate(input, priv.stream)
+            eval_coro = _streamed_evaluate(input, priv.stream)
         else:
-            eval_task = priv.client.evaluate(input)
-        output = loop.run_until_complete(eval_task)
+            eval_coro = priv.client.evaluate(input)
+        output = await eval_coro
         if output.uuid != input.uuid:
             raise Exception("Response does not correspond to the request.")
 
