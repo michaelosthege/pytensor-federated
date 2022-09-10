@@ -296,13 +296,15 @@ async def _connect_evaluate_async(
         Result message of the evaluation call.
     """
     if not cid in _privates:
-        _log.debug(f"Connecting client {cid}")
+        _log.debug("Connecting client %s", cid)
         if len(hosts_and_ports) == 1:
             host, port = hosts_and_ports[0]
             connect_coro = ClientPrivates.connect(host, port)
         else:
             connect_coro = ClientPrivates.connect_balanced(hosts_and_ports)
-        _privates[cid] = await connect_coro
+        pc = await connect_coro
+        _privates[cid] = pc
+        _log.info("Client %s connected to %s:%s", cid, pc.channel._host, pc.channel._port)
     priv = _privates[cid]
 
     # Make the asynchronous calls to the remote server
