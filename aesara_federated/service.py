@@ -363,13 +363,13 @@ class ArraysToArraysServiceClient:
         """Alias for ``.evaluate(*inputs)``."""
         return self.evaluate(*inputs)
 
-    def evaluate(self, *inputs: Sequence[np.ndarray], use_stream=True) -> Sequence[np.ndarray]:
+    def evaluate(self, *inputs: Sequence[np.ndarray], **kwargs) -> Sequence[np.ndarray]:
         loop = asyncio.get_event_loop()
-        eval_coro = self.evaluate_async(*inputs)
+        eval_coro = self.evaluate_async(*inputs, **kwargs)
         return loop.run_until_complete(eval_coro)
 
     async def evaluate_async(
-        self, *inputs: Sequence[np.ndarray], use_stream=True
+        self, *inputs: Sequence[np.ndarray], use_stream: bool = True, retries: int = 2
     ) -> Sequence[np.ndarray]:
         """Evaluate the federated compute function on inputs.
 
@@ -386,6 +386,9 @@ class ArraysToArraysServiceClient:
         *outputs
             Sequence of ``ndarray``s returned by the federated compute function.
         """
+        if retries < 0:
+            raise ValueError("Number of retries must be >= 0.")
+
         # Encode inputs
         input = InputArrays(
             items=[ndarray_from_numpy(np.asarray(i)) for i in inputs], uuid=str(uuid.uuid4())
@@ -395,7 +398,20 @@ class ArraysToArraysServiceClient:
         # This is used by `_connect_evaluate_async` to cache the gRPC connection objects.
         cid = thread_pid_id(self)
         hap = self._hosts_and_ports or [(self._host, self._port)]
-        output = await _connect_evaluate_async(input, cid, hap, use_stream)
+
+        output = None
+        for r in range(retries + 1):
+            try:
+                output = await _connect_evaluate_async(input, cid, hap, use_stream)
+                break
+            except grpclib.exceptions.StreamTerminatedError:
+                if cid in _privates:
+                    cp = _privates.pop(cid)
+                    _log.warning("Lost connection to %s:%s.", cp.channel._host, cp.channel._port)
+                    cp.channel.close()
+
+        # If no servers are available, already the connection setup fails.
+        assert output is not None
 
         # Decode outputs
         outputs = [ndarray_to_numpy(o) for o in output.items]
