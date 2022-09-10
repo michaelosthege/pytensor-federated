@@ -159,8 +159,36 @@ async def _streamed_evaluate(
     return response
 
 
+async def get_load_async(host: str, port: int, timeout: float = 5) -> Optional[GetLoadResult]:
+    """Retrieve load information from a server.
+
+    Parameters
+    ----------
+    host : str
+        IP address or host name of the remote gRPC server.
+    port : int
+        Port of the gRPC server.
+    timeout : float
+        Seconds to wait for a response.
+
+    Returns
+    -------
+    load
+        ``GetLoadResult`` object
+        or ``None`` if the server did not respond in a timely manner.
+    """
+    channel = Channel(host, port)
+    client = ArraysToArraysServiceStub(channel)
+    try:
+        load = await client.get_load(GetLoadParams(), timeout=timeout)
+    except (ConnectionRefusedError, asyncio.exceptions.TimeoutError, OSError):
+        load = None
+    channel.close()
+    return load
+
+
 async def get_loads_async(
-    hosts_and_ports: Sequence[Tuple[str, int]], *, timeout: float = 2
+    hosts_and_ports: Sequence[Tuple[str, int]], *, timeout: float = 5
 ) -> Sequence[Optional[GetLoadResult]]:
     """Retrieve load information from all servers that respond within a timeout.
 
@@ -168,6 +196,8 @@ async def get_loads_async(
     ----------
     hosts_and_ports : list of (host, port) tuples, optional
         List of hostnames and port number of ArraysToArrays gRPC servers.
+    timeout : float
+        Seconds to wait for a response.
 
     Returns
     -------
@@ -175,21 +205,11 @@ async def get_loads_async(
         ``GetLoadResult`` objects or ``None`` for each server.
     """
     # Asynchronously get the current load information for each server
-    load_tasks: List[Coroutine[Any, Any, GetLoadResult]] = []
-    for host, port in hosts_and_ports:
-        channel = Channel(host, port)
-        client = ArraysToArraysServiceStub(channel)
-        load_tasks.append(client.get_load(GetLoadParams(), timeout=timeout))
-
+    get_load_coros = [get_load_async(host, port, timeout) for host, port in hosts_and_ports]
     # Complete the asynchronous load queries
-    loads: List[Optional[GetLoadResult]] = []
-    for load_task in load_tasks:
-        try:
-            loads.append(await load_task)
-        except (ConnectionRefusedError, asyncio.exceptions.TimeoutError):
-            loads.append(None)
-
-    return loads
+    loads = await asyncio.gather(*get_load_coros, return_exceptions=True)
+    # Replace exceptions by None
+    return [(l if isinstance(l, GetLoadResult) else None) for l in loads]
 
 
 class ClientPrivates:
