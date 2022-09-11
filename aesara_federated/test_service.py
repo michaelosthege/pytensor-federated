@@ -222,3 +222,62 @@ def test_client_multiprocessing(eval_on_main, mp_start_method):
         p_server.terminate()
         p_server.join()
     pass
+
+
+def test_client_argchecking():
+    client = service.ArraysToArraysServiceClient("localhost", 9999)
+    with pytest.raises(ValueError, match="must be >= 0"):
+        client.evaluate(np.array(0), np.array(1), retries=-1)
+    pass
+
+
+def test_client_failover():
+    p0 = multiprocessing.Process(target=run_service, args=[9400, product_func, 5])
+    p1 = multiprocessing.Process(target=run_service, args=[9401, product_func, 2])
+    try:
+        p0.start()
+        p1.start()
+        time.sleep(5)
+
+        client = service.ArraysToArraysServiceClient(
+            hosts_and_ports=[
+                ("127.0.0.1", 9400),
+                ("127.0.0.1", 9401),  # fewest n_clients
+            ]
+        )
+        cid = service.thread_pid_id(client)
+
+        # First evaluation creates the connection to the least-busy server
+        assert cid not in service._privates
+        client.evaluate(np.array(2), np.array(3))[0] == 6
+        assert cid in service._privates
+        channel1 = service._privates[cid].channel
+        assert channel1._port == "9401"
+
+        # Killing the server is not immediately noticed by the client
+        p1.terminate()
+        p1.join()
+        assert service._privates[cid].channel._port == "9401"
+
+        # Evaluating with one retry attempt fails over to the other server
+        client.evaluate(np.array(2), np.array(4), retries=1)[0] == 8
+        # Confirm that the previous channel it was properly closed
+        assert channel1._protocol is None
+        # The new connection should have failed over to the third server
+        assert service._privates[cid].channel._port == "9400"
+
+        # Now kill that one too
+        p0.terminate()
+        p0.join()
+
+        # No servers left
+        with pytest.raises(TimeoutError, match="None of 2 servers responded"):
+            client.evaluate(np.array(2), np.array(4))
+
+    finally:
+        # Always stop the server again
+        p0.terminate()
+        p1.terminate()
+        p0.join()
+        p1.join()
+    pass
