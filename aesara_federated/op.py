@@ -1,4 +1,4 @@
-from typing import List, Sequence
+from typing import List, Sequence, Union
 
 import aesara
 import aesara.tensor as at
@@ -18,11 +18,11 @@ class LogpOp(Op):
         self._logp_func = logp_func
         super().__init__()
 
-    def make_node(self, *inputs: Variable) -> Apply:
+    def make_node(self, *inputs: Union[Variable, int, float, np.ndarray]) -> Apply:
         logp = at.scalar()
         return Apply(
             op=self,
-            inputs=inputs,
+            inputs=list(map(at.as_tensor, inputs)),
             outputs=[logp],
         )
 
@@ -51,12 +51,13 @@ class LogpGradOp(Op):
         self._logp_grad_func = logp_grad_func
         super().__init__()
 
-    def make_node(self, *inputs: Variable) -> Apply:
+    def make_node(self, *inputs: Union[Variable, int, float, np.ndarray]) -> Apply:
         logp = at.scalar()
-        grad = [i.type() for i in inputs]
+        inpts = list(map(at.as_tensor, inputs))
+        grad = [i.type() for i in inpts]
         return Apply(
             op=self,
-            inputs=inputs,
+            inputs=inpts,
             outputs=[logp, *grad],
         )
 

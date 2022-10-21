@@ -116,6 +116,11 @@ class TestLogpGradOp:
         assert isinstance(apply, Apply)
         assert len(apply.inputs) == 2
         assert len(apply.outputs) == 3
+
+        # Test with non-Variable inputs (issue #24)
+        apply = flop.make_node(1, 2)
+        assert isinstance(apply, Apply)
+        assert all(isinstance(i, Variable) for i in apply.inputs)
         pass
 
     def test_perform(self):
@@ -169,6 +174,26 @@ class TestLogpGradOp:
 
 
 class TestLogpOp:
+    def test_make_node(self):
+        def fn(a, b):
+            return a + b
+
+        lop = op.LogpOp(fn)
+
+        a = at.scalar()
+        b = at.scalar()
+        apply = lop.make_node(a, b)
+        assert isinstance(apply, Apply)
+        assert len(apply.inputs) == 2
+        assert len(apply.outputs) == 1
+
+        # Test with non-Variable inputs (issue #24)
+        apply = lop.make_node(1, 2)
+        assert isinstance(apply, Apply)
+        assert all(isinstance(i, Variable) for i in apply.inputs)
+        assert lop(1, 2).eval() == 3
+        pass
+
     def test_pymc_sampling_sequential(self):
         # Launch a blackbox loglikelihood on a child process.
         port = 9130
