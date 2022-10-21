@@ -1,12 +1,35 @@
-from typing import List, Sequence, Union
+from typing import Callable, List, Optional, Sequence, Union
 
 import aesara
 import aesara.tensor as at
 import numpy as np
+from aesara.compile.ops import FromFunctionOp
 from aesara.graph.basic import Apply, Variable
 from aesara.graph.op import Op, OutputStorageType, ParamsInputType
 
-from .signatures import LogpFunc, LogpGradFunc
+from .signatures import ComputeFunc, LogpFunc, LogpGradFunc
+
+
+class ArraysToArraysOp(FromFunctionOp):
+    """Alias for the `aesara.compile.ops.FromFunctionOp`.
+
+    This alias exists for more convenient imports,
+    more informative type hints,
+    and for continuitiy with other Ops from this package.
+    """
+
+    def __init__(
+        self,
+        compute_func: ComputeFunc,
+        itypes: Sequence[at.TensorType],
+        otypes: Sequence[at.TensorType],
+        infer_shape: Optional[Callable] = None,
+    ):
+        super().__init__(compute_func, itypes, otypes, infer_shape)
+
+    def make_node(self, *inputs: Variable) -> Apply:
+        input_tensors = list(map(at.as_tensor, inputs))
+        return super().make_node(*input_tensors)
 
 
 class LogpOp(Op):
@@ -53,11 +76,11 @@ class LogpGradOp(Op):
 
     def make_node(self, *inputs: Union[Variable, int, float, np.ndarray]) -> Apply:
         logp = at.scalar()
-        inpts = list(map(at.as_tensor, inputs))
-        grad = [i.type() for i in inpts]
+        input_tensors = list(map(at.as_tensor, inputs))
+        grad = [i.type() for i in input_tensors]
         return Apply(
             op=self,
-            inputs=inpts,
+            inputs=input_tensors,
             outputs=[logp, *grad],
         )
 
