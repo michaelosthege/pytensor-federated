@@ -11,6 +11,7 @@ import grpclib
 import numpy as np
 import pymc as pm
 import scipy
+from aesara.compile.ops import FromFunctionOp
 from aesara.graph.basic import Apply, Variable
 
 from aesara_federated import common, op, service
@@ -40,6 +41,13 @@ def dummy_quadratic_model(a, b):
         np.asarray(np.sum(2 * (a * x**2 + b - y))),
     ]
     return cost, grad
+
+
+def linear_and_quadratic_compute_func(a, b, x):
+    """Calculates 1st and 2nd order polynomial at the same time."""
+    linear = a + b * x
+    quadratic = a + b * x**2
+    return linear, quadratic
 
 
 def blackbox_linear_model(intercept, slope):
@@ -98,6 +106,27 @@ def run_blackbox_linear_model_mcmc(port: int, cores: int):
     pst = idata.posterior.stack(sample=("chain", "draw"))
     np.testing.assert_allclose(np.median(pst.slope), 2, atol=0.1)
     return
+
+
+class TestArraysToArraysOp:
+    def test_basics(self):
+        fn = linear_and_quadratic_compute_func
+        itypes = [at.dscalar, at.dscalar, at.dvector]
+        otypes = [at.dvector, at.dvector]
+
+        assert issubclass(op.ArraysToArraysOp, FromFunctionOp)
+        ataop = op.ArraysToArraysOp(fn, itypes, otypes)
+        assert isinstance(ataop, FromFunctionOp)
+
+        # Passing dtypes is needed because of OS-specific float32/64 defaults.
+        a = np.array(2, dtype="float64")
+        b = np.array(3, dtype="float64")
+        x = np.arange(4, dtype="float64")
+        y1, y2 = ataop(a, b, x)
+        expected = fn(a, b, x)
+        np.testing.assert_array_equal(y1.eval(), expected[0])
+        np.testing.assert_array_equal(y2.eval(), expected[1])
+        pass
 
 
 class TestLogpGradOp:
