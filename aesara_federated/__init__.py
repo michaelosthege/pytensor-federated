@@ -1,5 +1,6 @@
 try:
     from .op import ArraysToArraysOp, LogpGradOp, LogpOp
+    from .op_async import AsyncOp
 except ModuleNotFoundError:
     pass
 from .common import (
