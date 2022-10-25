@@ -12,6 +12,7 @@ from aesara_federated import op_async
 
 class _AsyncDelay(op_async.AsyncOp):
     def make_node(self, delay: Variable) -> Apply:
+        delay = at.as_tensor(delay)
         return Apply(
             op=self,
             inputs=[delay],
