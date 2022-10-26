@@ -1,4 +1,3 @@
-import asyncio
 import multiprocessing
 import platform
 import time
@@ -12,6 +11,7 @@ import pytest
 from aesara_federated import service, signatures
 from aesara_federated.npproto.utils import ndarray_from_numpy, ndarray_to_numpy
 from aesara_federated.rpc import GetLoadResult, InputArrays, OutputArrays
+from aesara_federated.utils import get_useful_event_loop
 
 
 def test_compute_function():
@@ -59,7 +59,7 @@ def run_service(port: int, compute_func: signatures.ComputeFunc, n_clients: int 
         await server.start("127.0.0.1", port)
         await server.wait_closed()
 
-    loop = asyncio.get_event_loop()
+    loop = get_useful_event_loop()
     loop.run_until_complete(run_server())
     return
 
@@ -124,7 +124,7 @@ def test_get_loads_async():
                 ("127.0.0.1", 9502),
             ]
         )
-        loop = asyncio.get_event_loop()
+        loop = get_useful_event_loop()
         loads = loop.run_until_complete(loads_task)
         assert isinstance(loads, list)
         assert loads[0] is None

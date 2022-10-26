@@ -15,6 +15,7 @@ from aesara.compile.ops import FromFunctionOp
 from aesara.graph.basic import Apply, Variable
 
 from aesara_federated import common, op, service
+from aesara_federated.utils import get_useful_event_loop
 
 
 class _MockLogpGradOpClient:
@@ -70,7 +71,7 @@ def run_blackbox_linear_model_service(port: int):
         await server.start("127.0.0.1", port)
         await server.wait_closed()
 
-    loop = asyncio.get_event_loop()
+    loop = get_useful_event_loop()
     loop.run_until_complete(run_server())
     return
 
