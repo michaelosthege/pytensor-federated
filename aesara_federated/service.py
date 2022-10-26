@@ -34,7 +34,7 @@ from .rpc import (
     OutputArrays,
 )
 from .signatures import ComputeFunc
-from .utils import argmin_none_or_func
+from .utils import argmin_none_or_func, get_useful_event_loop
 
 if TYPE_CHECKING:
     from betterproto.grpc.grpclib_client import MetadataLike
@@ -352,7 +352,7 @@ class ArraysToArraysServiceClient:
         priv = _privates.get(_id, None)
         if priv is not None:
             _log.info("Closing evaluation stream")
-            loop = asyncio.get_event_loop()
+            loop = get_useful_event_loop()
             loop.run_until_complete(priv.stream.end())
             priv.channel.close()
             # Remove from the dict, otherwise it won't be garbage-collected
@@ -364,6 +364,7 @@ class ArraysToArraysServiceClient:
         return self.evaluate(*inputs)
 
     def evaluate(self, *inputs: Sequence[np.ndarray], **kwargs) -> Sequence[np.ndarray]:
+        # NOTE: Replacing this 👇 with `get_useful_event_loop()` somehow breaks multiprocessing.
         loop = asyncio.get_event_loop()
         eval_coro = self.evaluate_async(*inputs, **kwargs)
         return loop.run_until_complete(eval_coro)

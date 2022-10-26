@@ -1,8 +1,11 @@
 import asyncio
+import logging
 from typing import Any, Sequence
 
 from aesara.graph.basic import Apply, Variable
 from aesara.graph.op import Op, OutputStorageType, ParamsInputType
+
+from .utils import get_useful_event_loop
 
 
 class AsyncOp(Op):
@@ -13,12 +16,10 @@ class AsyncOp(Op):
         output_storage: OutputStorageType,
         params: ParamsInputType = None,
     ) -> None:
-        try:
-            loop = asyncio.get_running_loop()
-        except RuntimeError:
-            loop = asyncio.new_event_loop()
+        loop = get_useful_event_loop()
         coro = self.perform_async(node, inputs, output_storage, params)
-        return loop.run_until_complete(coro)
+        loop.run_until_complete(coro)
+        return
 
     async def perform_async(
         self,
@@ -89,10 +90,7 @@ class ParallelAsyncOp(AsyncOp):
             ofrom = oto
 
         # Wait for completion of all sub-performs
-        try:
-            loop = asyncio.get_running_loop()
-        except RuntimeError:
-            loop = asyncio.new_event_loop()
+        loop = get_useful_event_loop()
         futures = [asyncio.ensure_future(c, loop=loop) for c in coros]
         pool = asyncio.gather(*futures, return_exceptions=True)
         loop.run_until_complete(pool)
