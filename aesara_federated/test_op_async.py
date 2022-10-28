@@ -1,9 +1,12 @@
 import asyncio
 import time
+from typing import Sequence, Tuple
 
 import aesara
 import aesara.tensor as at
+import numpy
 import pytest
+from aesara.graph import FunctionGraph
 from aesara.graph.basic import Apply, Variable
 from aesara.graph.op import Op
 
@@ -77,3 +80,103 @@ class TestParallelAsyncOp:
         assert float(delay_sum) == 0.7
         assert 0.5 < t_took < delay_sum
         pass
+
+
+def test_find_parallelizable_applies():
+    a, b, c = at.scalars("abc")
+    x = at.sum([a + 1, b + 2, c + 3]) + 4
+    fg = FunctionGraph([a, b, c], [x])
+
+    found = op_async.find_parallelizable_applies(fg, at.elemwise.Elemwise)
+    assert isinstance(found, list)
+    # The three +1 operations are independent
+    assert len(found) == 3
+    assert all(isinstance(a.op, at.elemwise.Elemwise) for a in found)
+    pass
+
+
+def test_parallelize_async_applies():
+    delay = _AsyncDelay()
+    a, b = at.scalars("ab")
+    c = delay(delay(a) + delay(b))
+
+    fg = FunctionGraph([a, b], [c])
+
+    # check the structure of the original graph
+    a3 = fg.outputs[0].owner
+    d1, d2 = a3.inputs[0].owner.inputs
+    a1 = d1.owner
+    a2 = d2.owner
+    assert isinstance(a1.op, _AsyncDelay)
+    assert isinstance(a2.op, _AsyncDelay)
+    assert isinstance(a3.op, _AsyncDelay)
+    assert a1 is not a2
+
+    # fuse the applies producing d1 and d2
+    op_async.parallelize_async_applies(fg, [a1, a2])
+    assert any(isinstance(a.op, op_async.ParallelAsyncOp) for a in fg.apply_nodes)
+
+    # The inputs to the sum were replaced by new variables
+    n1, n2 = fg.outputs[0].owner.inputs[0].owner.inputs
+    assert n1 is not d1
+    # These new nodes were produced by a ParallelAsyncOp
+    assert n1.owner is n2.owner
+    assert isinstance(n1.owner.op, op_async.ParallelAsyncOp)
+    assert set(n1.owner.op.applies) == {a1, a2}
+    pass
+
+
+def _measure_fg(fg: FunctionGraph, *inputs) -> Tuple[Sequence[numpy.ndarray], float]:
+    """Measure the runtime of a function compiled from `fg`."""
+    f = aesara.function(
+        fg.inputs,
+        fg.outputs,
+        mode=aesara.compile.FAST_COMPILE,  # skip the async fusion
+    )
+    t0 = time.perf_counter()
+    outputs = f(*inputs)
+    dt = time.perf_counter() - t0
+    return outputs, dt
+
+
+def test_parallelize_all_async_applies():
+    delay = _AsyncDelay()
+    a, b = at.scalars("ab")
+
+    # Two parallel delays
+    ab = delay(a) + delay(b)
+    # Another two parallel delays that depend on the previous layer
+    total = delay(ab) + delay(ab + 1)
+    # Total delays
+    # sequential: a + b + (a + b) + (a + b + 1)
+    # parallel  : max(ab) + (a + b + 1)
+
+    fg = FunctionGraph([a, b], [total])
+    assert sum(isinstance(a.op, _AsyncDelay) for a in fg.apply_nodes) == 4
+
+    # Time it sequentially
+    _, act = _measure_fg(fg, 0.3, 0.7)
+    exp = 3 * 0.3 + 3 * 0.7 + 1  # 4 seconds
+    assert exp < act < exp + 0.2
+
+    # Now optimize
+    op_async.parallelize_all_async_applies(fg)
+    assert not any(isinstance(a.op, _AsyncDelay) for a in fg.apply_nodes)
+    assert sum(isinstance(a.op, op_async.ParallelAsyncOp) for a in fg.apply_nodes) == 2
+
+    # Time it in parallel
+    _, act = _measure_fg(fg, 0.3, 0.7)
+    exp = 0.7 + 0.3 + 0.7 + 1  # 2.7 seconds
+    assert exp < act < exp + 0.2
+    pass
+
+
+def test_fuse_asyncs_by_default():
+    delay = _AsyncDelay()
+    a, b = at.scalars("ab")
+    c = delay(a) + delay(b)
+    f = aesara.function([a, b], [c])
+    t0 = time.perf_counter()
+    f(0.25, 0.25)
+    assert time.perf_counter() - t0 < 0.3
+    pass

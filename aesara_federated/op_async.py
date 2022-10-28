@@ -1,9 +1,12 @@
 import asyncio
-import logging
-from typing import Any, Sequence
+from typing import Any, List, Sequence
 
-from aesara.graph.basic import Apply, Variable
+from aesara.compile import optdb
+from aesara.graph import FunctionGraph
+from aesara.graph.basic import Apply, Variable, is_in_ancestors
+from aesara.graph.features import ReplaceValidate
 from aesara.graph.op import Op, OutputStorageType, ParamsInputType
+from aesara.graph.rewriting.basic import GraphRewriter
 
 from .utils import get_useful_event_loop
 
@@ -35,6 +38,9 @@ class ParallelAsyncOp(AsyncOp):
     """An op that parallelizes the `perform_async` methods of multiple `AsyncOp` apply nodes."""
 
     def __init__(self, applies: Sequence[Apply]) -> None:
+        # Freeze the order of items
+        applies = tuple(applies)
+        # Confirm that all were the result of an AsyncOp
         for a, apply in enumerate(applies):
             if not isinstance(apply.op, AsyncOp):
                 raise ValueError(
@@ -96,3 +102,105 @@ class ParallelAsyncOp(AsyncOp):
         loop.run_until_complete(pool)
         # Output storage was modified inplace by the child operations.
         return
+
+
+def find_parallelizable_applies(fg: FunctionGraph, op_cls: type) -> List[Apply]:
+    """Searches for independent ``Apply`` nodes of type ``op_cls``.
+
+    Parameters
+    ----------
+    fg
+        A ``FunctionGraph`` to search.
+    op_cls
+        A subtype of ``Op`` to search for.
+
+    Returns
+    -------
+    applies
+        A possibly empty sequence of ``Apply`` nodes that could compute in parallel.
+    """
+    applies = []
+    for apply in fg.toposort():
+        if not isinstance(apply.op, op_cls):
+            continue
+        # Does this node depend on any one of the already-collected?
+        if not any(is_in_ancestors(apply, a) for a in applies):
+            applies.append(apply)
+            continue
+        elif len(applies) == 1:
+            # Only one node collected already, but the current depends on it.
+            # Start over starting from the current one.
+            applies = [apply]
+        else:
+            # Multiple nodes upstream of the current one can be parallelized.
+            break
+    if len(applies) > 1:
+        return applies
+    return []
+
+
+def parallelize_async_applies(fg: FunctionGraph, applies: Sequence[Apply]) -> None:
+    """Combines multiple ``Apply`` nodes into one produced by a ``ParallelAsyncOp``.
+
+    Parameters
+    ----------
+    fg
+        The ``FunctionGraph`` to edit.
+    applies
+        A sequence of parallelizable ``Apply`` nodes
+        that resulted from ``AsyncOp``s.
+    """
+    # Concatenate inputs and outputs
+    inputs = []
+    old_outputs = []
+    for apply in applies:
+        inputs.extend(apply.inputs)
+        old_outputs.extend(apply.outputs)
+    # Push the original inputs through the parallel Op to obtain new outputs.
+    pop = ParallelAsyncOp(applies=applies)
+    new_outputs = pop(*inputs)
+    # Replace old output variables with the new ones to substitute the applies.
+    # If the graph has the `ReplaceValidate`, we prefer to use
+    # `replace_all_validate` which runs some safety checks.
+    replace_all = getattr(fg, "replace_all_validate", fg.replace_all)
+    replace_all(list(zip(old_outputs, new_outputs)))
+    return
+
+
+def parallelize_all_async_applies(fg: FunctionGraph):
+    """Recursively fuse parallelizable ``AsyncOp`` applications inplace.
+
+    This optimizes the graph for faster execution
+    by running ``perform_async`` in parallel where possible.
+
+    Parameters
+    ----------
+    fg
+        A ``FunctionGraph`` to rewrite inplace.
+    """
+    applies = find_parallelizable_applies(fg, AsyncOp)
+    while applies:
+        parallelize_async_applies(fg, applies)
+        applies = find_parallelizable_applies(fg, AsyncOp)
+    return
+
+
+class AsyncFusionOptimizer(GraphRewriter):
+    """Optimizer that parallelizes ``AsyncOp.perform_async`` calls."""
+
+    def add_requirements(self, fgraph: FunctionGraph):
+        """Enable node replacements with safety checks."""
+        fgraph.attach_feature(ReplaceValidate())
+
+    def apply(self, fgraph: FunctionGraph):
+        parallelize_all_async_applies(fgraph)
+
+
+# Register the parallelization as a graph optimization to run in `FAST_RUN` compile modes.
+if not "fuse_asyncs" in optdb:
+    optdb.register(
+        "fuse_asyncs",
+        AsyncFusionOptimizer(),
+        "fast_run",
+        position=90,
+    )
