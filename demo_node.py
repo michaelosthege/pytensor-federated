@@ -8,7 +8,7 @@ import aesara.tensor as at
 import grpclib
 import numpy as np
 
-from aesara_federated import ArraysToArraysService, LogpGradFunc, wrap_logp_grad_func
+from aesara_federated import ArraysToArraysService, wrap_logp_grad_func
 
 _log = logging.getLogger(__file__)
 logging.basicConfig(level=logging.INFO)
