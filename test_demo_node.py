@@ -3,7 +3,7 @@ import numpy as np
 import pymc as pm
 
 import demo_node
-from aesara_federated.op import LogpGradOp
+from aesara_federated.wrapper_ops import LogpGradOp
 
 
 class TestLinearModel:

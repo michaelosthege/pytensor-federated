@@ -14,7 +14,7 @@ import scipy
 from aesara.compile.ops import FromFunctionOp
 from aesara.graph.basic import Apply, Variable
 
-from aesara_federated import common, op, service
+from aesara_federated import common, service, wrapper_ops
 from aesara_federated.utils import get_useful_event_loop
 
 
@@ -85,7 +85,7 @@ def run_blackbox_linear_model_mcmc(port: int, cores: int):
     np.testing.assert_allclose(result, -1511.41423640139)
 
     # Create the Op, build and sample the PyMC model
-    blackbox_L = op.LogpOp(client)
+    blackbox_L = wrapper_ops.LogpOp(client)
     with pm.Model():
         # This runs with Metropolis which is inefficient.
         # Let's make it easy...
@@ -115,8 +115,8 @@ class TestArraysToArraysOp:
         itypes = [at.dscalar, at.dscalar, at.dvector]
         otypes = [at.dvector, at.dvector]
 
-        assert issubclass(op.ArraysToArraysOp, FromFunctionOp)
-        ataop = op.ArraysToArraysOp(fn, itypes, otypes)
+        assert issubclass(wrapper_ops.ArraysToArraysOp, FromFunctionOp)
+        ataop = wrapper_ops.ArraysToArraysOp(fn, itypes, otypes)
         assert isinstance(ataop, FromFunctionOp)
 
         # Passing dtypes is needed because of OS-specific float32/64 defaults.
@@ -133,13 +133,13 @@ class TestArraysToArraysOp:
 class TestLogpGradOp:
     def test_init(self):
         client = _MockLogpGradOpClient(dummy_quadratic_model)
-        flop = op.LogpGradOp(client)
+        flop = wrapper_ops.LogpGradOp(client)
         assert flop._logp_grad_func is client
         pass
 
     def test_make_node(self):
         client = _MockLogpGradOpClient(dummy_quadratic_model)
-        flop = op.LogpGradOp(client)
+        flop = wrapper_ops.LogpGradOp(client)
         a = at.scalar()
         b = at.scalar()
         apply = flop.make_node(a, b)
@@ -155,7 +155,7 @@ class TestLogpGradOp:
 
     def test_perform(self):
         client = _MockLogpGradOpClient(dummy_quadratic_model)
-        flop = op.LogpGradOp(client)
+        flop = wrapper_ops.LogpGradOp(client)
         a = at.scalar()
         b = at.scalar()
         apply = flop.make_node(a, b)
@@ -170,7 +170,7 @@ class TestLogpGradOp:
 
     def test_forward(self):
         client = _MockLogpGradOpClient(dummy_quadratic_model)
-        flop = op.LogpGradOp(client)
+        flop = wrapper_ops.LogpGradOp(client)
         a = at.scalar()
         b = at.scalar()
         logp, da, db = flop(a, b)
@@ -189,7 +189,7 @@ class TestLogpGradOp:
 
     def test_grad(self):
         client = _MockLogpGradOpClient(dummy_quadratic_model)
-        flop = op.LogpGradOp(client)
+        flop = wrapper_ops.LogpGradOp(client)
         a = at.scalar()
         b = at.scalar()
         logp, *_ = flop(a, b)
@@ -208,7 +208,7 @@ class TestLogpOp:
         def fn(a, b):
             return a + b
 
-        lop = op.LogpOp(fn)
+        lop = wrapper_ops.LogpOp(fn)
 
         a = at.scalar()
         b = at.scalar()
