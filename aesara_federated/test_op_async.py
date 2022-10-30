@@ -48,6 +48,30 @@ class TestAsyncOp:
         pass
 
 
+class TestAsyncFromFunctionOp:
+    def test_performs(self):
+        async def _fn(x):
+            await asyncio.sleep(x)
+            return x
+
+        affo = op_async.AsyncFromFunctionOp(
+            fn=_fn,
+            itypes=[at.dscalar],
+            otypes=[at.dscalar],
+        )
+        assert isinstance(affo, op_async.AsyncOp)
+        assert isinstance(affo, aesara.compile.ops.FromFunctionOp)
+
+        d = at.scalar()
+        out = affo(d)
+        # Compile a function to exclude compile time from delay measurement
+        f = aesara.function([d], [out])
+        ts = time.perf_counter()
+        f(0.5)
+        assert 0.5 < time.perf_counter() - ts < 0.6
+        pass
+
+
 class TestParallelAsyncOp:
     def test_perform(self):
         # Create two nodes that are the result of separate applies
