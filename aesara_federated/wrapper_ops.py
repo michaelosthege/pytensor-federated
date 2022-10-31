@@ -1,4 +1,4 @@
-from typing import Callable, List, Optional, Sequence, Union
+from typing import Any, Callable, List, Optional, Sequence, Union
 
 import aesara
 import aesara.tensor as at
@@ -7,6 +7,7 @@ from aesara.compile.ops import FromFunctionOp
 from aesara.graph.basic import Apply, Variable
 from aesara.graph.op import Op, OutputStorageType, ParamsInputType
 
+from .op_async import AsyncFromFunctionOp, AsyncOp
 from .signatures import ComputeFunc, LogpFunc, LogpGradFunc
 
 
@@ -26,6 +27,14 @@ class ArraysToArraysOp(FromFunctionOp):
         infer_shape: Optional[Callable] = None,
     ):
         super().__init__(compute_func, itypes, otypes, infer_shape)
+
+    def make_node(self, *inputs: Variable) -> Apply:
+        input_tensors = list(map(at.as_tensor, inputs))
+        return super().make_node(*input_tensors)
+
+
+class AsyncArraysToArraysOp(AsyncFromFunctionOp):
+    """Async equivalent to ``ArraysToArraysOp``."""
 
     def make_node(self, *inputs: Variable) -> Apply:
         input_tensors = list(map(at.as_tensor, inputs))
@@ -57,6 +66,19 @@ class LogpOp(Op):
         params: ParamsInputType = None,
     ) -> None:
         logp = self._logp_func(*inputs)
+        output_storage[0][0] = logp
+        return
+
+
+class AsyncLogpOp(AsyncOp, LogpOp):
+    async def perform_async(
+        self,
+        node: Apply,
+        inputs: Sequence[Any],
+        output_storage: OutputStorageType,
+        params: ParamsInputType = None,
+    ) -> None:
+        logp = await self._logp_func(*inputs)
         output_storage[0][0] = logp
         return
 
@@ -111,3 +133,18 @@ class LogpGradOp(Op):
         _, *gradients = self(*inputs)
         # Return symbolic gradients for each input (of which there is one).
         return [g_logp * g for g in gradients]
+
+
+class AsyncLogpGradOp(AsyncOp, LogpGradOp):
+    async def perform_async(
+        self,
+        node: Apply,
+        inputs: Sequence[Any],
+        output_storage: OutputStorageType,
+        params: ParamsInputType = None,
+    ) -> None:
+        logp, gradient = await self._logp_grad_func(*inputs)
+        output_storage[0][0] = logp
+        for g, grad in enumerate(gradient):
+            output_storage[1 + g][0] = grad
+        return

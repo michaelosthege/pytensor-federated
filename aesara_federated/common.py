@@ -90,6 +90,12 @@ class LogpServiceClient:
         (logp,) = self._client.evaluate(*inputs, use_stream=use_stream)
         return logp
 
+    async def evaluate_async(
+        self, *inputs: Sequence[np.ndarray], use_stream=True
+    ) -> Tuple[np.ndarray, Sequence[np.ndarray]]:
+        (logp,) = await self._client.evaluate_async(*inputs, use_stream=use_stream)
+        return logp
+
 
 class LogpGradServiceClient:
     """Wraps the ``ArraysToArraysServiceClient`` in a ``LogpGradFunc`` signature."""
@@ -132,4 +138,10 @@ class LogpGradServiceClient:
             Sequence of ``ndarray`` with gradients of ``logp`` w.r.t. ``inputs``.
         """
         logp, *gradients = self._client.evaluate(*inputs, use_stream=use_stream)
+        return logp, gradients
+
+    async def evaluate_async(
+        self, *inputs: Sequence[np.ndarray], use_stream=True
+    ) -> Tuple[np.ndarray, Sequence[np.ndarray]]:
+        logp, *gradients = await self._client.evaluate_async(*inputs, use_stream=use_stream)
         return logp, gradients

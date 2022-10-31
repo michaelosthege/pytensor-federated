@@ -10,11 +10,12 @@ import arviz
 import grpclib
 import numpy as np
 import pymc as pm
+import pytest
 import scipy
 from aesara.compile.ops import FromFunctionOp
 from aesara.graph.basic import Apply, Variable
 
-from aesara_federated import common, service, wrapper_ops
+from aesara_federated import common, op_async, service, wrapper_ops
 from aesara_federated.utils import get_useful_event_loop
 
 
@@ -76,8 +77,16 @@ def run_blackbox_linear_model_service(port: int):
     return
 
 
-def run_blackbox_linear_model_mcmc(port: int, cores: int):
+def run_blackbox_linear_model_mcmc(port: int, cores: int, use_async: bool):
     client = common.LogpServiceClient("127.0.0.1", port)
+
+    # Choose the callable and corresponding wrapper Op
+    if use_async:
+        fn = client.evaluate_async
+        op_cls = wrapper_ops.AsyncLogpOp
+    else:
+        fn = client
+        op_cls = wrapper_ops.LogpOp
 
     # Do the check on the main process to keep tracebacks readable.
     result = client(0.4, 1.2)
@@ -85,7 +94,7 @@ def run_blackbox_linear_model_mcmc(port: int, cores: int):
     np.testing.assert_allclose(result, -1511.41423640139)
 
     # Create the Op, build and sample the PyMC model
-    blackbox_L = wrapper_ops.LogpOp(client)
+    blackbox_L = op_cls(fn)
     with pm.Model():
         # This runs with Metropolis which is inefficient.
         # Let's make it easy...
@@ -125,6 +134,31 @@ class TestArraysToArraysOp:
         x = np.arange(4, dtype="float64")
         y1, y2 = ataop(a, b, x)
         expected = fn(a, b, x)
+        np.testing.assert_array_equal(y1.eval(), expected[0])
+        np.testing.assert_array_equal(y2.eval(), expected[1])
+        pass
+
+
+class TestAsyncArraysToArraysOp:
+    def test_basics(self):
+        async def fn(*args):
+            await asyncio.sleep(0.001)
+            return linear_and_quadratic_compute_func(*args)
+
+        itypes = [at.dscalar, at.dscalar, at.dvector]
+        otypes = [at.dvector, at.dvector]
+
+        assert issubclass(wrapper_ops.AsyncArraysToArraysOp, op_async.AsyncOp)
+        assert issubclass(wrapper_ops.AsyncArraysToArraysOp, FromFunctionOp)
+        ataop = wrapper_ops.AsyncArraysToArraysOp(fn, itypes, otypes)
+        assert isinstance(ataop, FromFunctionOp)
+
+        # Passing dtypes is needed because of OS-specific float32/64 defaults.
+        a = np.array(2, dtype="float64")
+        b = np.array(3, dtype="float64")
+        x = np.arange(4, dtype="float64")
+        y1, y2 = ataop(a, b, x)
+        expected = linear_and_quadratic_compute_func(a, b, x)
         np.testing.assert_array_equal(y1.eval(), expected[0])
         np.testing.assert_array_equal(y2.eval(), expected[1])
         pass
@@ -203,12 +237,42 @@ class TestLogpGradOp:
         pass
 
 
+class TestAsyncLogpGradOp:
+    def test_perform_async(self):
+        async def fn(*args):
+            await asyncio.sleep(0.001)
+            return dummy_quadratic_model(*args)
+
+        flop = wrapper_ops.AsyncLogpGradOp(fn)
+        assert isinstance(flop, op_async.AsyncOp)
+        assert isinstance(flop, wrapper_ops.LogpGradOp)
+        a = at.scalar()
+        b = at.scalar()
+        apply = flop.make_node(a, b)
+        inputs = [np.array(1.2), np.array(1.5)]
+        output_storage = [[None], [None], [None]]
+        flop.perform(apply, inputs, output_storage)
+        logp, (da, db) = dummy_quadratic_model(*inputs)
+        np.testing.assert_array_equal(output_storage[0][0], logp)
+        np.testing.assert_array_equal(output_storage[1][0], da)
+        np.testing.assert_array_equal(output_storage[2][0], db)
+        pass
+
+
 class TestLogpOp:
-    def test_make_node(self):
+    @pytest.mark.parametrize("use_async", [False, True])
+    def test_make_node(self, use_async):
         def fn(a, b):
             return a + b
 
-        lop = wrapper_ops.LogpOp(fn)
+        async def fn_async(a, b):
+            await asyncio.sleep(0.001)
+            return a + b
+
+        if use_async:
+            lop = wrapper_ops.LogpOp(fn)
+        else:
+            lop = wrapper_ops.AsyncLogpOp(fn_async)
 
         a = at.scalar()
         b = at.scalar()
@@ -231,7 +295,7 @@ class TestLogpOp:
         try:
             p_server.start()
             time.sleep(10)
-            run_blackbox_linear_model_mcmc(port, cores=1)
+            run_blackbox_linear_model_mcmc(port, cores=1, use_async=False)
         finally:
             # Always stop the server again
             p_server.terminate()
@@ -245,7 +309,7 @@ class TestLogpOp:
         try:
             p_server.start()
             time.sleep(10)
-            run_blackbox_linear_model_mcmc(port, cores=4)
+            run_blackbox_linear_model_mcmc(port, cores=4, use_async=True)
         finally:
             # Always stop the server again
             p_server.terminate()
@@ -261,4 +325,4 @@ if __name__ == "__main__":
     if sys.argv[1] == "service":
         run_blackbox_linear_model_service(port=9130)
     elif sys.argv[1] == "mcmc":
-        run_blackbox_linear_model_mcmc(port=9130, cores=4)
+        run_blackbox_linear_model_mcmc(port=9130, cores=4, use_async=True)
