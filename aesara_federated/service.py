@@ -364,8 +364,7 @@ class ArraysToArraysServiceClient:
         return self.evaluate(*inputs)
 
     def evaluate(self, *inputs: Sequence[np.ndarray], **kwargs) -> Sequence[np.ndarray]:
-        # NOTE: Replacing this 👇 with `get_useful_event_loop()` somehow breaks multiprocessing.
-        loop = asyncio.get_event_loop()
+        loop = get_useful_event_loop()
         eval_coro = self.evaluate_async(*inputs, **kwargs)
         return loop.run_until_complete(eval_coro)
 
