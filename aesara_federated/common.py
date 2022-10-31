@@ -52,8 +52,14 @@ def wrap_logp_grad_func(logp_grad_func: LogpGradFunc) -> ComputeFunc:
 class LogpServiceClient:
     """Wraps the ``ArraysToArraysServiceClient`` in a ``LogpFunc`` signature."""
 
-    def __init__(self, host: str, port: int) -> None:
-        """Wraps the ``ArraysToArraysServiceClient`` in a ``LogpFunc`` signature.
+    def __init__(
+        self,
+        host: str = None,
+        port: int = None,
+        *,
+        hosts_and_ports: Sequence[Tuple[str, int]] = None,
+    ) -> None:
+        """Wraps the ``ArraysToArraysServiceClient`` in a ``LogpGradFunc`` signature.
 
         Parameters
         ----------
@@ -61,8 +67,11 @@ class LogpServiceClient:
             IP address or host name of the remote gRPC server.
         port : int
             Port of the gRPC server.
+        hosts_and_ports : list of (host, port) tuples, optional
+            If provided, this takes precedence over `host` and `port`.
+            Uses client-side load balancing to choose which server to connec to.
         """
-        self._client = ArraysToArraysServiceClient(host, port)
+        self._client = ArraysToArraysServiceClient(host, port, hosts_and_ports=hosts_and_ports)
         super().__init__()
 
     def __call__(self, *inputs: Sequence[np.ndarray]) -> np.ndarray:
@@ -100,7 +109,13 @@ class LogpServiceClient:
 class LogpGradServiceClient:
     """Wraps the ``ArraysToArraysServiceClient`` in a ``LogpGradFunc`` signature."""
 
-    def __init__(self, host: str, port: int) -> None:
+    def __init__(
+        self,
+        host: str = None,
+        port: int = None,
+        *,
+        hosts_and_ports: Sequence[Tuple[str, int]] = None,
+    ) -> None:
         """Wraps the ``ArraysToArraysServiceClient`` in a ``LogpGradFunc`` signature.
 
         Parameters
@@ -109,8 +124,11 @@ class LogpGradServiceClient:
             IP address or host name of the remote gRPC server.
         port : int
             Port of the gRPC server.
+        hosts_and_ports : list of (host, port) tuples, optional
+            If provided, this takes precedence over `host` and `port`.
+            Uses client-side load balancing to choose which server to connec to.
         """
-        self._client = ArraysToArraysServiceClient(host, port)
+        self._client = ArraysToArraysServiceClient(host, port, hosts_and_ports=hosts_and_ports)
         super().__init__()
 
     def __call__(self, *inputs: Sequence[np.ndarray]) -> Tuple[np.ndarray, Sequence[np.ndarray]]:
