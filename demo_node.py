@@ -17,7 +17,9 @@ logging.basicConfig(level=logging.INFO)
 
 
 class LinearModelBlackbox:
-    def __init__(self, data_x: np.ndarray, data_y: np.ndarray, sigma: float, delay: float=0) -> None:
+    def __init__(
+        self, data_x: np.ndarray, data_y: np.ndarray, sigma: float, delay: float = 0
+    ) -> None:
         self._data_x = data_x
         self._data_y = data_y
         self._sigma = sigma
@@ -43,13 +45,16 @@ class LinearModelBlackbox:
     def __call__(
         self, *parameters: Sequence[np.ndarray]
     ) -> Tuple[np.ndarray, Sequence[np.ndarray]]:
+        # This perform the computation and sleeps
+        # until it took `self._delay` seconds.
+        t0 = time.perf_counter()
         logp, *grads = self._fn(*parameters)
-        # Simulate expensive compute
-        time.sleep(self._delay)
+        t_elapsed = time.perf_counter() - t0
+        time.sleep(max(0, self._delay - t_elapsed))
         return logp, grads
 
 
-async def run_node_async(*, bind: str, port: int):
+async def run_node_async(*, bind: str, port: int, delay: float):
     _log.info("Generating a secret dataset")
     x = np.linspace(0, 10, 10)
     sigma = 0.4
@@ -65,6 +70,7 @@ async def run_node_async(*, bind: str, port: int):
         data_x=x,
         data_y=y,
         sigma=sigma,
+        delay=delay,
     )
     _log.info("Binding the service to %s on port %i", bind, port)
     service = ArraysToArraysService(wrap_logp_grad_func(model_fn))
@@ -74,11 +80,11 @@ async def run_node_async(*, bind: str, port: int):
     return
 
 
-def run_node(bind_port: Tuple[str, int]):
+def run_node(bind_port_delay: Tuple[str, int, float]):
     try:
-        bind, port = bind_port
+        bind, port, delay = bind_port_delay
         loop = asyncio.get_event_loop()
-        loop.run_until_complete(run_node_async(bind=bind, port=port))
+        loop.run_until_complete(run_node_async(bind=bind, port=port, delay=delay))
     except KeyboardInterrupt:
 
         class KeyboardInterruptError(Exception):
@@ -89,11 +95,11 @@ def run_node(bind_port: Tuple[str, int]):
     return
 
 
-def run_node_pool(ports: Sequence[int]):
+def run_node_pool(bind: str, ports: Sequence[int], delay: float):
     _log.info("Launching workers on %i subprocesses", len(ports))
     pool = multiprocessing.Pool(len(ports))
     try:
-        pool.map(run_node, [(args.bind, p) for p in ports])
+        pool.map(run_node, [(bind, p, delay) for p in ports])
     except KeyboardInterrupt:
         _log.info("Stopping workers...")
         pool.terminate()
@@ -113,6 +119,16 @@ if __name__ == "__main__":
         type=str,
         help="Port numbers for the ArraysToArrays gRPC service.",
     )
+    parser.add_argument(
+        "--delay",
+        default=0,
+        type=float,
+        help="Seconds to sleep in each evaluation.",
+    )
     args, _ = parser.parse_known_args()
 
-    run_node_pool(list(map(int, str(args.ports).split(","))))
+    run_node_pool(
+        bind=args.bind,
+        ports=list(map(int, str(args.ports).split(","))),
+        delay=args.delay,
+    )
