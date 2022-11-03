@@ -1,6 +1,13 @@
 try:
     from .op_async import AsyncOp
-    from .wrapper_ops import ArraysToArraysOp, LogpGradOp, LogpOp
+    from .wrapper_ops import (
+        ArraysToArraysOp,
+        AsyncArraysToArraysOp,
+        AsyncLogpGradOp,
+        AsyncLogpOp,
+        LogpGradOp,
+        LogpOp,
+    )
 except ModuleNotFoundError:
     pass
 from .common import (

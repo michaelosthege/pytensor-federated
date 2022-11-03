@@ -1,7 +1,9 @@
 import asyncio
-from typing import Any, List, Sequence
+from typing import Any, Callable, List, Optional, Sequence
 
+import aesara.tensor as at
 from aesara.compile import optdb
+from aesara.compile.ops import FromFunctionOp
 from aesara.graph import FunctionGraph
 from aesara.graph.basic import Apply, Variable, is_in_ancestors
 from aesara.graph.features import ReplaceValidate
@@ -32,6 +34,38 @@ class AsyncOp(Op):
         params: ParamsInputType = None,
     ) -> None:
         raise NotImplementedError()
+
+
+class AsyncFromFunctionOp(AsyncOp, FromFunctionOp):
+    """Async version of the ``aesara.compile.ops.FromFunctionOp``.
+
+    Note that ``AsyncOp.perform`` overrides ``FromFunctionOp.perform`` by MRO.
+    """
+
+    def __init__(
+        self,
+        fn: Callable,
+        itypes: Sequence[at.TensorType],
+        otypes: Sequence[at.TensorType],
+        infer_shape: Optional[Callable] = None,
+    ):
+        self.__async_fn = fn
+        super().__init__(fn, itypes, otypes, infer_shape)
+
+    async def perform_async(
+        self,
+        node: Apply,
+        inputs: Sequence[Any],
+        output_storage: OutputStorageType,
+        params: ParamsInputType = None,
+    ) -> None:
+        outs = await self.__async_fn(*inputs)
+        if not isinstance(outs, (list, tuple)):
+            outs = (outs,)
+        assert len(outs) == len(output_storage)
+        for i in range(len(outs)):
+            output_storage[i][0] = outs[i]
+        return
 
 
 class ParallelAsyncOp(AsyncOp):
