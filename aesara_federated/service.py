@@ -244,6 +244,9 @@ class ClientPrivates:
         # 2. If two servers have identical load, a random one will be selected.
         hosts_and_ports = np.random.permutation(hosts_and_ports)
 
+        # Now wait a random interval to de-synchronize from parallel processes.
+        await asyncio.sleep(np.random.uniform())
+
         # Asynchronously retriev load information from all servers
         loads = await get_loads_async(hosts_and_ports)
 
