@@ -1,12 +1,12 @@
-[![pipeline](https://github.com/michaelosthege/aesara-federated/workflows/test/badge.svg)](https://github.com/michaelosthege/aesara-federated/actions)
+[![pipeline](https://github.com/michaelosthege/pytensor-federated/workflows/test/badge.svg)](https://github.com/michaelosthege/pytensor-federated/actions)
 
-# `aesara-federated`
-This package implements federated computing with [Aesara](https://github.com/aesara-devs/aesara).
+# `pytensor-federated`
+This package implements federated computing with [PyTensor](https://github.com/pymc-devs/pytensor).
 
-Using `aesara-federated`, differentiable cost functions can be computed on federated nodes.
+Using `pytensor-federated`, differentiable cost functions can be computed on federated nodes.
 Inputs and outputs are transmitted in binary via a bidirectional gRPC stream.
 
-A client side `LogpGradOp` is provided to conveniently embed federated compute operations in Aesara graphs such as a [PyMC](https://github.com/pymc-devs/pymc) model.
+A client side `LogpGradOp` is provided to conveniently embed federated compute operations in PyTensor graphs such as a [PyMC](https://github.com/pymc-devs/pymc) model.
 
 The example code implements a simple Bayesian linear regression to data that is "private" to the federated compute process.
 
@@ -21,7 +21,7 @@ python demo_model.py
 ```
 
 ## Architecture
-`aesara-federated` is designed to be a very generalizable framework for federated computing with gRPC, but it comes with implementations for Aesara, and specifically for use cases of Bayesian inference.
+`pytensor-federated` is designed to be a very generalizable framework for federated computing with gRPC, but it comes with implementations for PyTensor, and specifically for use cases of Bayesian inference.
 This is reflected in the actual implementation, where the most basic gRPC service implementation -- the `ArraysToArraysService` -- is wrapped by a few implementation flavors, specifically for common use cases in Bayesian inference.
 
 At the core, everything is built around an `ArraysToArrays` gRPC service, which takes any number of (NumPy) arrays as parameters, and returns any number of (NumPy) arrays as outputs.
@@ -54,10 +54,10 @@ Different sub-graphs of this example could be wrapped by an `ArraysToArraysServi
 If the entire model is differentiable, one can even return gradients.
 For example, with a linear model: `[slope, intercept] -> [LL, dLL_dslope, dLL_dintercept]`.
 
-The role of Aesara here is purely technical:
-Aesara is a graph computation framework that implements auto-differentiation.
-Wrapping the `ArraysToArraysServiceClient` in Aesara `Op`s simply makes it easier to build more sophisticated compute graphs.
-Aesara is also the computatation backend for PyMC, which is the most popular framework for Bayesian inference in Python.
+The role of PyTensor here is purely technical:
+PyTensor is a graph computation framework that implements auto-differentiation.
+Wrapping the `ArraysToArraysServiceClient` in PyTensor `Op`s simply makes it easier to build more sophisticated compute graphs.
+PyTensor is also the computatation backend for PyMC, which is the most popular framework for Bayesian inference in Python.
 
 
 ## Installation & Contributing

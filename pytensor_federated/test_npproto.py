@@ -3,8 +3,8 @@ from datetime import datetime
 import numpy
 import pytest
 
-from aesara_federated import npproto
-from aesara_federated.npproto import utils
+from pytensor_federated import npproto
+from pytensor_federated.npproto import utils
 
 
 class TestUtils:

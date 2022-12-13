@@ -1,18 +1,18 @@
 from typing import Any, Callable, List, Optional, Sequence, Union
 
-import aesara
-import aesara.tensor as at
 import numpy as np
-from aesara.compile.ops import FromFunctionOp
-from aesara.graph.basic import Apply, Variable
-from aesara.graph.op import Op, OutputStorageType, ParamsInputType
+import pytensor
+import pytensor.tensor as at
+from pytensor.compile.ops import FromFunctionOp
+from pytensor.graph.basic import Apply, Variable
+from pytensor.graph.op import Op, OutputStorageType, ParamsInputType
 
 from .op_async import AsyncFromFunctionOp, AsyncOp
 from .signatures import ComputeFunc, LogpFunc, LogpGradFunc
 
 
 class ArraysToArraysOp(FromFunctionOp):
-    """Alias for the `aesara.compile.ops.FromFunctionOp`.
+    """Alias for the `pytensor.compile.ops.FromFunctionOp`.
 
     This alias exists for more convenient imports,
     more informative type hints,
@@ -124,7 +124,7 @@ class LogpGradOp(Op):
         # one w.r.t. logp
         g_logp, *gs_inputs = output_grads
         for i, g in enumerate(gs_inputs):
-            if not isinstance(g.type, aesara.gradient.DisconnectedType):
+            if not isinstance(g.type, pytensor.gradient.DisconnectedType):
                 raise ValueError(f"Can't propagate gradients wrt parameter {i+1}")
         # Call again on the original inputs, to obtain a handle
         # on the gradient. The computation will not actually be

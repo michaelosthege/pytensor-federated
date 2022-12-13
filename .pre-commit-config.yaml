@@ -15,9 +15,9 @@ repos:
     - id: isort
       name: isort
       args: ["--profile", "black"]
-      exclude: (aesara_federated/rpc.py|aesara_federated/npproto/)
+      exclude: (pytensor_federated/rpc.py|pytensor_federated/npproto/)
 - repo: https://github.com/psf/black
   rev: 22.3.0
   hooks:
     - id: black
-      exclude: (aesara_federated/rpc.py|aesara_federated/npproto/)
+      exclude: (pytensor_federated/rpc.py|pytensor_federated/npproto/)

@@ -5,12 +5,12 @@ import multiprocessing
 import time
 from typing import Sequence, Tuple
 
-import aesara
-import aesara.tensor as at
 import grpclib
 import numpy as np
+import pytensor
+import pytensor.tensor as at
 
-from aesara_federated import ArraysToArraysService, wrap_logp_grad_func
+from pytensor_federated import ArraysToArraysService, wrap_logp_grad_func
 
 _log = logging.getLogger(__file__)
 logging.basicConfig(level=logging.INFO)
@@ -36,7 +36,7 @@ class LinearModelBlackbox:
         pdf = 1 / (sigma * np.sqrt(2 * np.pi)) * at.exp(-0.5 * ((y - pred) / sigma) ** 2)
         logp = at.log(pdf).sum()
         grad = at.grad(logp, wrt=[intercept, slope])
-        fn = aesara.function(
+        fn = pytensor.function(
             inputs=[intercept, slope],
             outputs=[logp, *grad],
         )

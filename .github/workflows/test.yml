@@ -45,10 +45,10 @@ jobs:
         python-version: ${{matrix.python-version}}
         use-mamba: true
         use-only-tar-bz2: true # IMPORTANT: This needs to be set for caching to work properly!
-    - name: Install aesara-federated
+    - name: Install pytensor-federated
       run: |
           conda activate aefenv
           pip install -e .
     - name: Run tests
       run: |
-        pytest -v --cov=./aesara_federated --cov-report xml --cov-report term-missing .
+        pytest -v --cov=./pytensor_federated --cov-report xml --cov-report term-missing .

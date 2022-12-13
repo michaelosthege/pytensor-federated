@@ -4,7 +4,7 @@ import re
 
 import setuptools
 
-__packagename__ = "aesara_federated"
+__packagename__ = "pytensor_federated"
 ROOT = pathlib.Path(__file__).parent
 
 
@@ -38,8 +38,8 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     version=__version__,
     description="This package helps to reduce the amount of boilerplate code when creating Airflow DAGs from Python callables.",
-    url="https://github.com/michaelosthege/aesara-federated",
-    download_url=f"https://github.com/michaelosthege/aesara-federated/tarball/{__version__}",
+    url="https://github.com/michaelosthege/pytensor-federated",
+    download_url=f"https://github.com/michaelosthege/pytensor-federated/tarball/{__version__}",
     author="Michael Osthege",
     author_email="michael.osthege@outlook.com",
     license="GNU Affero General Public License v3",

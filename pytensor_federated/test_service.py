@@ -8,10 +8,10 @@ import grpclib
 import numpy as np
 import pytest
 
-from aesara_federated import service, signatures
-from aesara_federated.npproto.utils import ndarray_from_numpy, ndarray_to_numpy
-from aesara_federated.rpc import GetLoadResult, InputArrays, OutputArrays
-from aesara_federated.utils import get_useful_event_loop
+from pytensor_federated import service, signatures
+from pytensor_federated.npproto.utils import ndarray_from_numpy, ndarray_to_numpy
+from pytensor_federated.rpc import GetLoadResult, InputArrays, OutputArrays
+from pytensor_federated.utils import get_useful_event_loop
 
 
 def test_compute_function():

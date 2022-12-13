@@ -1,14 +1,14 @@
 import asyncio
 from typing import Any, Callable, List, Optional, Sequence
 
-import aesara.tensor as at
-from aesara.compile import optdb
-from aesara.compile.ops import FromFunctionOp
-from aesara.graph import FunctionGraph
-from aesara.graph.basic import Apply, Variable, is_in_ancestors
-from aesara.graph.features import ReplaceValidate
-from aesara.graph.op import Op, OutputStorageType, ParamsInputType
-from aesara.graph.rewriting.basic import GraphRewriter
+import pytensor.tensor as at
+from pytensor.compile import optdb
+from pytensor.compile.ops import FromFunctionOp
+from pytensor.graph import FunctionGraph
+from pytensor.graph.basic import Apply, Variable, is_in_ancestors
+from pytensor.graph.features import ReplaceValidate
+from pytensor.graph.op import Op, OutputStorageType, ParamsInputType
+from pytensor.graph.rewriting.basic import GraphRewriter
 
 from .utils import get_useful_event_loop
 
@@ -37,7 +37,7 @@ class AsyncOp(Op):
 
 
 class AsyncFromFunctionOp(AsyncOp, FromFunctionOp):
-    """Async version of the ``aesara.compile.ops.FromFunctionOp``.
+    """Async version of the ``pytensor.compile.ops.FromFunctionOp``.
 
     Note that ``AsyncOp.perform`` overrides ``FromFunctionOp.perform`` by MRO.
     """
