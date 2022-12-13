@@ -2,15 +2,15 @@ import asyncio
 import time
 from typing import Sequence, Tuple
 
-import aesara
-import aesara.tensor as at
 import numpy
+import pytensor
+import pytensor.tensor as at
 import pytest
-from aesara.graph import FunctionGraph
-from aesara.graph.basic import Apply, Variable
-from aesara.graph.op import Op
+from pytensor.graph import FunctionGraph
+from pytensor.graph.basic import Apply, Variable
+from pytensor.graph.op import Op
 
-from aesara_federated import op_async
+from pytensor_federated import op_async
 
 
 class _AsyncDelay(op_async.AsyncOp):
@@ -41,7 +41,7 @@ class TestAsyncOp:
         d = at.scalar()
         out = delay_op(d)
         # Compile a function to exclude compile time from delay measurement
-        f = aesara.function([d], [out])
+        f = pytensor.function([d], [out])
         ts = time.perf_counter()
         f(0.5)
         assert 0.5 < time.perf_counter() - ts < 0.6
@@ -60,12 +60,12 @@ class TestAsyncFromFunctionOp:
             otypes=[at.dscalar],
         )
         assert isinstance(affo, op_async.AsyncOp)
-        assert isinstance(affo, aesara.compile.ops.FromFunctionOp)
+        assert isinstance(affo, pytensor.compile.ops.FromFunctionOp)
 
         d = at.scalar()
         out = affo(d)
         # Compile a function to exclude compile time from delay measurement
-        f = aesara.function([d], [out])
+        f = pytensor.function([d], [out])
         ts = time.perf_counter()
         f(0.5)
         assert 0.5 < time.perf_counter() - ts < 0.6
@@ -97,7 +97,7 @@ class TestParallelAsyncOp:
 
         # Evaluating the delays in parallel is faster than the sum of delays.
         # We do this with a compiled function to exclude compile time from delay measurement.
-        f = aesara.function([d1, d2], [dsum])
+        f = pytensor.function([d1, d2], [dsum])
         t_start = time.perf_counter()
         delay_sum = f(0.5, 0.2)[0]
         t_took = time.perf_counter() - t_start
@@ -152,10 +152,10 @@ def test_parallelize_async_applies():
 
 def _measure_fg(fg: FunctionGraph, *inputs) -> Tuple[Sequence[numpy.ndarray], float]:
     """Measure the runtime of a function compiled from `fg`."""
-    f = aesara.function(
+    f = pytensor.function(
         fg.inputs,
         fg.outputs,
-        mode=aesara.compile.FAST_COMPILE,  # skip the async fusion
+        mode=pytensor.compile.FAST_COMPILE,  # skip the async fusion
     )
     t0 = time.perf_counter()
     outputs = f(*inputs)
@@ -199,7 +199,7 @@ def test_fuse_asyncs_by_default():
     delay = _AsyncDelay()
     a, b = at.scalars("ab")
     c = delay(a) + delay(b)
-    f = aesara.function([a, b], [c])
+    f = pytensor.function([a, b], [c])
     t0 = time.perf_counter()
     f(0.25, 0.25)
     assert time.perf_counter() - t0 < 0.3

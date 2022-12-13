@@ -4,19 +4,19 @@ import multiprocessing
 import sys
 import time
 
-import aesara
-import aesara.tensor as at
 import arviz
 import grpclib
 import numpy as np
 import pymc as pm
+import pytensor
+import pytensor.tensor as at
 import pytest
 import scipy
-from aesara.compile.ops import FromFunctionOp
-from aesara.graph.basic import Apply, Variable
+from pytensor.compile.ops import FromFunctionOp
+from pytensor.graph.basic import Apply, Variable
 
-from aesara_federated import common, op_async, service, wrapper_ops
-from aesara_federated.utils import get_useful_event_loop
+from pytensor_federated import common, op_async, service, wrapper_ops
+from pytensor_federated.utils import get_useful_event_loop
 
 
 class _MockLogpGradOpClient:
@@ -228,7 +228,7 @@ class TestLogpGradOp:
         b = at.scalar()
         logp, *_ = flop(a, b)
         ga, gb = at.grad(logp, [a, b])
-        fn = aesara.function(inputs=[a, b], outputs=[logp, ga, gb])
+        fn = pytensor.function(inputs=[a, b], outputs=[logp, ga, gb])
         exlogp, (exda, exdb) = dummy_quadratic_model(1.4, 0.5)
         actual = fn(1.4, 0.5)
         np.testing.assert_array_equal(actual[0], exlogp)

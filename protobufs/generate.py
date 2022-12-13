@@ -8,7 +8,7 @@ import subprocess
 
 DP_HERE = pathlib.Path(__file__).parent.absolute()
 DP_ROOT = DP_HERE.parent
-DP_PROJ = DP_ROOT / "aesara_federated"
+DP_PROJ = DP_ROOT / "pytensor_federated"
 FP_PROTO = DP_HERE / "service.proto"
 
 

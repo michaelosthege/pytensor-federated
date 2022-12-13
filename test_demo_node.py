@@ -1,9 +1,9 @@
-import aesara.tensor as at
 import numpy as np
 import pymc as pm
+import pytensor.tensor as pt
 
 import demo_node
-from aesara_federated.wrapper_ops import LogpGradOp
+from pytensor_federated.wrapper_ops import LogpGradOp
 
 
 class TestLinearModel:
@@ -27,16 +27,16 @@ class TestLinearModel:
 
 
 def test_linear_model_equivalence():
-    x = np.array([1, 2, 3])
-    y = np.array([2, 3, 1])
+    x = np.array([1, 2, 3], dtype="float64")
+    y = np.array([2, 3, 1], dtype="float64")
     sigma = 0.2
 
     # Build a log-probability graph of a linear model
-    intercept = at.scalar()
-    slope = at.scalar()
+    intercept = pt.scalar()
+    slope = pt.scalar()
     mu = intercept + slope * x
     pred = pm.Normal.dist(mu, sigma)
-    L_model = pm.joint_logp(pred, y, sum=True)
+    L_model = pm.logprob.joint_logprob({pred: pt.as_tensor(y)}, sum=True)
 
     # Build the same log-probability using the blackbox Op
     lmb = demo_node.LinearModelBlackbox(x, y, sigma)
@@ -54,8 +54,8 @@ def test_linear_model_equivalence():
     )
 
     # And now the gradient
-    dL_model = at.grad(L_model, [intercept, slope])
-    dL_federated = at.grad(L_federated, [intercept, slope])
+    dL_model = pt.grad(L_model, [intercept, slope])
+    dL_federated = pt.grad(L_federated, [intercept, slope])
     for dM, dF in zip(dL_model, dL_federated):
         np.testing.assert_array_equal(
             dM.eval(test_point),

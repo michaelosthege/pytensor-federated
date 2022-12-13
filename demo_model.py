@@ -6,7 +6,7 @@ import arviz
 import numpy as np
 import pymc as pm
 
-from aesara_federated import AsyncLogpGradOp, LogpGradOp, LogpGradServiceClient
+from pytensor_federated import AsyncLogpGradOp, LogpGradOp, LogpGradServiceClient
 
 _log = logging.getLogger(__file__)
 logging.basicConfig(level=logging.INFO)

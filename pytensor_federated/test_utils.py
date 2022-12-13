@@ -1,7 +1,7 @@
 import asyncio
 
-from aesara_federated import utils
-from aesara_federated.rpc import GetLoadResult
+from pytensor_federated import utils
+from pytensor_federated.rpc import GetLoadResult
 
 
 def test_argmin_load():
