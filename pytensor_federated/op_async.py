@@ -5,7 +5,7 @@ import pytensor.tensor as at
 from pytensor.compile import optdb
 from pytensor.compile.ops import FromFunctionOp
 from pytensor.graph import FunctionGraph
-from pytensor.graph.basic import Apply, Variable, is_in_ancestors
+from pytensor.graph.basic import Apply, Variable, apply_depends_on
 from pytensor.graph.features import ReplaceValidate
 from pytensor.graph.op import Op, OutputStorageType, ParamsInputType
 from pytensor.graph.rewriting.basic import GraphRewriter
@@ -158,7 +158,7 @@ def find_parallelizable_applies(fg: FunctionGraph, op_cls: type) -> List[Apply]:
         if not isinstance(apply.op, op_cls):
             continue
         # Does this node depend on any one of the already-collected?
-        if not any(is_in_ancestors(apply, a) for a in applies):
+        if not any(apply_depends_on(apply, a) for a in applies):
             applies.append(apply)
             continue
         elif len(applies) == 1:
