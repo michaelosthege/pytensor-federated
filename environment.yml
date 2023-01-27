@@ -4,9 +4,12 @@ channels:
 dependencies:
   - black
   - isort
+  - nest-asyncio
+  - numpy
   - pytest
   - pytest-cov
   - pip
+  - psutil
   - pip:
     - betterproto[compiler]==2.0.0b5
-    - pymc==5.0.1
+    - pymc==5.0.2
