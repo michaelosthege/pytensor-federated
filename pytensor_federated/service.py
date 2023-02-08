@@ -1,6 +1,7 @@
 import asyncio
 import logging
 import os
+import random
 import threading
 import uuid
 from typing import (
@@ -239,15 +240,18 @@ class ClientPrivates:
 
     @staticmethod
     async def connect_balanced(hosts_and_ports: Sequence[Tuple[str, int]]):
+        # For randomization of order and delays we need thread-safe random numbers!
+        rng = np.random.default_rng(seed=random.randint(0, 100_000))
+
         # First shuffle the list. This achieves two things:
         # 1. Our queries are send in random order
         # 2. If two servers have identical load, a random one will be selected.
-        hosts_and_ports = np.random.permutation(hosts_and_ports)
+        hosts_and_ports = rng.permutation(hosts_and_ports)
 
         # Now wait a random interval to de-synchronize from parallel processes.
-        await asyncio.sleep(np.random.uniform())
+        await asyncio.sleep(rng.uniform(0.2, 2))
 
-        # Asynchronously retriev load information from all servers
+        # Asynchronously retrieve load information from all servers
         loads = await get_loads_async(hosts_and_ports)
 
         # Find one with minimal number of clients
