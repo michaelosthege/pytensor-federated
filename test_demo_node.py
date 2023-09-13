@@ -36,7 +36,7 @@ def test_linear_model_equivalence():
     slope = pt.scalar()
     mu = intercept + slope * x
     pred = pm.Normal.dist(mu, sigma)
-    L_model = pm.logprob.joint_logprob({pred: pt.as_tensor(y)}, sum=True)
+    L_model = pm.logprob.conditional_logp({pred: pt.as_tensor(y)}, sum=True)
 
     # Build the same log-probability using the blackbox Op
     lmb = demo_node.LinearModelBlackbox(x, y, sigma)
