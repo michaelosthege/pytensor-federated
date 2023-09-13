@@ -1,3 +1,4 @@
+[![PyPI version](https://img.shields.io/pypi/v/pytensor-federated)](https://pypi.org/project/pytensor-federated)
 [![pipeline](https://github.com/michaelosthege/pytensor-federated/workflows/test/badge.svg)](https://github.com/michaelosthege/pytensor-federated/actions)
 [![coverage](https://codecov.io/gh/michaelosthege/pytensor-federated/branch/main/graph/badge.svg)](https://codecov.io/gh/michaelosthege/pytensor-federated)
 

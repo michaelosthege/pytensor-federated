@@ -19,4 +19,4 @@ from .common import (
 from .service import ArraysToArraysService, ArraysToArraysServiceClient
 from .signatures import ComputeFunc, LogpFunc, LogpGradFunc
 
-__version__ = "0.4.2"
+__version__ = "1.0.0"
