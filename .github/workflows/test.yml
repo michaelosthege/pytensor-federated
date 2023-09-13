@@ -52,3 +52,13 @@ jobs:
     - name: Run tests
       run: |
         pytest -v --cov=./pytensor_federated --cov-report xml --cov-report term-missing .
+    - name: Test Wheel install and import
+      run: |
+          python setup.py bdist_wheel
+          cd dist
+          pip install pytensor_federated*.whl
+          python -c "import pytensor_federated; print(pytensor_federated.__version__)"
+    - name: Test Wheel with twine
+      run: |
+          pip install twine
+          twine check dist/*
