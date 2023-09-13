@@ -1,4 +1,4 @@
-name: aefenv
+name: ptfenv
 channels:
   - conda-forge
 dependencies:
@@ -11,5 +11,5 @@ dependencies:
   - pip
   - psutil
   - pip:
-    - betterproto[compiler]==2.0.0b5
+    - betterproto[compiler]==2.0.0b6
     - pymc==5.8.0
