@@ -1,0 +1,28 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: pytensor-federated
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Michael
+    family-names: Osthege
+    email: michael.osthege@outlook.com
+    orcid: 'https://orcid.org/0000-0002-2734-7624'
+    affiliation: Forschungszentrum Jülich GmbH
+repository-code: 'https://github.com/michaelosthege/pytensor-federated'
+abstract: >-
+  PyTensor-Federated is a package that extends PyTensor to
+  perform differentiable graph computation across multiple
+  machines.
+keywords:
+  - federated computing
+  - pymc
+  - pytensor
+license: AGPL-3.0
+commit: 09f3f1057998e038afb54ba0f6130a0c3b859172
+version: 1.0.0
+date-released: '2023-09-13'
