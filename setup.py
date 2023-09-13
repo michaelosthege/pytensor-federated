@@ -38,6 +38,8 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     version=__version__,
     description="This package helps to reduce the amount of boilerplate code when creating Airflow DAGs from Python callables.",
+    long_description=open(ROOT / "README.md").read(),
+    long_description_content_type="text/markdown",
     url="https://github.com/michaelosthege/pytensor-federated",
     download_url=f"https://github.com/michaelosthege/pytensor-federated/tarball/{__version__}",
     author="Michael Osthege",
