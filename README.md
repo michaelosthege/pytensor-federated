@@ -1,4 +1,5 @@
 [![pipeline](https://github.com/michaelosthege/pytensor-federated/workflows/test/badge.svg)](https://github.com/michaelosthege/pytensor-federated/actions)
+[![coverage](https://codecov.io/gh/michaelosthege/pytensor-federated/branch/main/graph/badge.svg)](https://codecov.io/gh/michaelosthege/pytensor-federated)
 
 # `pytensor-federated`
 This package implements federated computing with [PyTensor](https://github.com/pymc-devs/pytensor).
