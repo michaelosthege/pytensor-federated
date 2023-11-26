@@ -5,7 +5,7 @@ import pytensor
 import pytensor.tensor as at
 from pytensor.compile.ops import FromFunctionOp
 from pytensor.graph.basic import Apply, Variable
-from pytensor.graph.op import Op, OutputStorageType, ParamsInputType
+from pytensor.graph.op import Op, OutputStorageType
 
 from .op_async import AsyncFromFunctionOp, AsyncOp
 from .signatures import ComputeFunc, LogpFunc, LogpGradFunc
@@ -63,7 +63,6 @@ class LogpOp(Op):
         node: Apply,
         inputs: Sequence[np.ndarray],
         output_storage: OutputStorageType,
-        params: ParamsInputType = None,
     ) -> None:
         logp = self._logp_func(*inputs)
         output_storage[0][0] = logp
@@ -76,7 +75,6 @@ class AsyncLogpOp(AsyncOp, LogpOp):
         node: Apply,
         inputs: Sequence[Any],
         output_storage: OutputStorageType,
-        params: ParamsInputType = None,
     ) -> None:
         logp = await self._logp_func(*inputs)
         output_storage[0][0] = logp
@@ -111,7 +109,6 @@ class LogpGradOp(Op):
         node: Apply,
         inputs: Sequence[np.ndarray],
         output_storage: OutputStorageType,
-        params: ParamsInputType = None,
     ) -> None:
         logp, gradient = self._logp_grad_func(*inputs)
         output_storage[0][0] = logp
@@ -141,7 +138,6 @@ class AsyncLogpGradOp(AsyncOp, LogpGradOp):
         node: Apply,
         inputs: Sequence[Any],
         output_storage: OutputStorageType,
-        params: ParamsInputType = None,
     ) -> None:
         logp, gradient = await self._logp_grad_func(*inputs)
         output_storage[0][0] = logp
