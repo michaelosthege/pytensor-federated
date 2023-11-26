@@ -7,7 +7,7 @@ from pytensor.compile.ops import FromFunctionOp
 from pytensor.graph import FunctionGraph
 from pytensor.graph.basic import Apply, Variable, apply_depends_on
 from pytensor.graph.features import ReplaceValidate
-from pytensor.graph.op import Op, OutputStorageType, ParamsInputType
+from pytensor.graph.op import Op, OutputStorageType
 from pytensor.graph.rewriting.basic import GraphRewriter
 
 from .utils import get_useful_event_loop
@@ -19,10 +19,9 @@ class AsyncOp(Op):
         node: Apply,
         inputs: Sequence[Any],
         output_storage: OutputStorageType,
-        params: ParamsInputType = None,
     ) -> None:
         loop = get_useful_event_loop()
-        coro = self.perform_async(node, inputs, output_storage, params)
+        coro = self.perform_async(node, inputs, output_storage)
         loop.run_until_complete(coro)
         return
 
@@ -31,7 +30,6 @@ class AsyncOp(Op):
         node: Apply,
         inputs: Sequence[Any],
         output_storage: OutputStorageType,
-        params: ParamsInputType = None,
     ) -> None:
         raise NotImplementedError()
 
@@ -57,7 +55,6 @@ class AsyncFromFunctionOp(AsyncOp, FromFunctionOp):
         node: Apply,
         inputs: Sequence[Any],
         output_storage: OutputStorageType,
-        params: ParamsInputType = None,
     ) -> None:
         outs = await self.__async_fn(*inputs)
         if not isinstance(outs, (list, tuple)):
@@ -112,7 +109,6 @@ class ParallelAsyncOp(AsyncOp):
         node: Apply,
         inputs: Sequence[Any],
         output_storage: OutputStorageType,
-        params: ParamsInputType = None,
     ) -> None:
         # Create coroutines the performing the taks of each child node
         coros = []
@@ -122,9 +118,7 @@ class ParallelAsyncOp(AsyncOp):
             ito = ifrom + apply.nin
             oto = ofrom + apply.nout
             coros.append(
-                apply.op.perform_async(
-                    apply, inputs[ifrom:ito], output_storage[ofrom:oto], params=params
-                )
+                apply.op.perform_async(apply, inputs[ifrom:ito], output_storage[ofrom:oto])
             )
             ifrom = ito
             ofrom = oto
