@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.9", "3.11"]
+        python-version: ["3.10", "3.11"]
     defaults:
       run:
         shell: bash -l {0}
@@ -39,7 +39,7 @@ jobs:
         miniforge-variant: Mambaforge
         miniforge-version: latest
         mamba-version: "*"
-        activate-environment: aefenv
+        activate-environment: ptfenv
         channel-priority: strict
         environment-file: environment.yml
         python-version: ${{matrix.python-version}}
@@ -47,7 +47,7 @@ jobs:
         use-only-tar-bz2: true # IMPORTANT: This needs to be set for caching to work properly!
     - name: Install pytensor-federated
       run: |
-          conda activate aefenv
+          conda activate ptfenv
           pip install -e .
     - name: Run tests
       run: |
