@@ -1,7 +1,7 @@
 import multiprocessing
 import platform
 import time
-from typing import Sequence
+from typing import Sequence, Tuple
 from unittest import mock
 
 import grpclib
@@ -42,7 +42,7 @@ def test_compute_function():
     pass
 
 
-def product_func(*inputs: Sequence[np.ndarray]) -> Sequence[np.ndarray]:
+def product_func(*inputs: Sequence[np.ndarray]) -> Tuple[np.ndarray]:
     """Calculates the product of NumPy arrays"""
     return (np.prod(inputs),)
 
