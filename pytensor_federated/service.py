@@ -6,9 +6,7 @@ import threading
 import uuid
 from typing import (
     TYPE_CHECKING,
-    Any,
     AsyncIterator,
-    Coroutine,
     Dict,
     List,
     Optional,
@@ -190,7 +188,7 @@ async def get_load_async(host: str, port: int, timeout: float = 5) -> Optional[G
 
 async def get_loads_async(
     hosts_and_ports: Sequence[Tuple[str, int]], *, timeout: float = 5
-) -> Sequence[Optional[GetLoadResult]]:
+) -> List[Optional[GetLoadResult]]:
     """Retrieve load information from all servers that respond within a timeout.
 
     Parameters
@@ -366,18 +364,18 @@ class ArraysToArraysServiceClient:
             del _privates[_id]
         return
 
-    def __call__(self, *inputs: Sequence[np.ndarray]) -> Sequence[np.ndarray]:
+    def __call__(self, *inputs: Sequence[np.ndarray]) -> List[np.ndarray]:
         """Alias for ``.evaluate(*inputs)``."""
         return self.evaluate(*inputs)
 
-    def evaluate(self, *inputs: Sequence[np.ndarray], **kwargs) -> Sequence[np.ndarray]:
+    def evaluate(self, *inputs: Sequence[np.ndarray], **kwargs) -> List[np.ndarray]:
         loop = get_useful_event_loop()
         eval_coro = self.evaluate_async(*inputs, **kwargs)
         return loop.run_until_complete(eval_coro)
 
     async def evaluate_async(
         self, *inputs: Sequence[np.ndarray], use_stream: bool = True, retries: int = 2
-    ) -> Sequence[np.ndarray]:
+    ) -> List[np.ndarray]:
         """Evaluate the federated compute function on inputs.
 
         Parameters
@@ -390,8 +388,8 @@ class ArraysToArraysServiceClient:
 
         Returns
         -------
-        *outputs
-            Sequence of ``ndarray``s returned by the federated compute function.
+        outputs
+            List of ``ndarray``s returned by the federated compute function.
         """
         if retries < 0:
             raise ValueError("Number of retries must be >= 0.")

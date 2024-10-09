@@ -78,9 +78,7 @@ class LogpServiceClient:
         """Alias for ``.evaluate(*inputs)``."""
         return self.evaluate(*inputs)
 
-    def evaluate(
-        self, *inputs: Sequence[np.ndarray], use_stream=True
-    ) -> Tuple[np.ndarray, Sequence[np.ndarray]]:
+    def evaluate(self, *inputs: Sequence[np.ndarray], use_stream=True) -> np.ndarray:
         """Evaluate the federated blackbox logp gradient function on inputs.
 
         Parameters
@@ -99,9 +97,7 @@ class LogpServiceClient:
         (logp,) = self._client.evaluate(*inputs, use_stream=use_stream)
         return logp
 
-    async def evaluate_async(
-        self, *inputs: Sequence[np.ndarray], use_stream=True
-    ) -> Tuple[np.ndarray, Sequence[np.ndarray]]:
+    async def evaluate_async(self, *inputs: Sequence[np.ndarray], use_stream=True) -> np.ndarray:
         (logp,) = await self._client.evaluate_async(*inputs, use_stream=use_stream)
         return logp
 
