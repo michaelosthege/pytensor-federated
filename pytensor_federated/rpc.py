@@ -91,14 +91,12 @@ class ArraysToArraysServiceStub(betterproto.ServiceStub):
 
     async def evaluate_stream(
         self,
-        input_arrays_iterator: Union[
-            AsyncIterable["InputArrays"], Iterable["InputArrays"]
-        ],
+        input_arrays_iterator: Union[AsyncIterable[InputArrays], Iterable[InputArrays]],
         *,
         timeout: Optional[float] = None,
         deadline: Optional["Deadline"] = None,
         metadata: Optional["MetadataLike"] = None
-    ) -> AsyncIterator["OutputArrays"]:
+    ) -> AsyncIterator[OutputArrays]:
         async for response in self._stream_stream(
             "/ArraysToArraysService/EvaluateStream",
             input_arrays_iterator,
@@ -129,12 +127,13 @@ class ArraysToArraysServiceStub(betterproto.ServiceStub):
 
 
 class ArraysToArraysServiceBase(ServiceBase):
+
     async def evaluate(self, input_arrays: "InputArrays") -> "OutputArrays":
         raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
 
     async def evaluate_stream(
-        self, input_arrays_iterator: AsyncIterator["InputArrays"]
-    ) -> AsyncIterator["OutputArrays"]:
+        self, input_arrays_iterator: AsyncIterator[InputArrays]
+    ) -> AsyncIterator[OutputArrays]:
         raise grpclib.GRPCError(grpclib.const.Status.UNIMPLEMENTED)
         yield OutputArrays()
 
