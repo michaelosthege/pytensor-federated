@@ -12,8 +12,8 @@ import betterproto
 @dataclass(eq=False, repr=False)
 class Ndarray(betterproto.Message):
     """
-    Represents a NumPy array of arbitrary shape or dtype. Note that the array
-    must support the buffer protocol.
+    Represents a NumPy array of arbitrary shape or dtype.
+     Note that the array must support the buffer protocol.
     """
 
     data: bytes = betterproto.bytes_field(1)
