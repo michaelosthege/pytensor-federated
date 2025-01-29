@@ -36,7 +36,7 @@ jobs:
           hashFiles('requirements.txt') }}
     - uses: conda-incubator/setup-miniconda@v3
       with:
-        miniforge-variant: Mambaforge
+        miniforge-variant: Miniforge
         miniforge-version: latest
         mamba-version: "*"
         activate-environment: ptfenv
