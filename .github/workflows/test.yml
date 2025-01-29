@@ -17,7 +17,7 @@ jobs:
       uses: actions/cache@v4
       env:
         # Increase this value to reset cache if environment.yml has not changed
-        CACHE_NUMBER: 0
+        CACHE_NUMBER: 1
       with:
         path: ~/conda_pkgs_dir
         key: ${{ runner.os }}-py${{matrix.python-version}}-conda-${{ env.CACHE_NUMBER }}-${{
@@ -36,7 +36,6 @@ jobs:
           hashFiles('requirements.txt') }}
     - uses: conda-incubator/setup-miniconda@v3
       with:
-        miniforge-variant: Miniforge
         miniforge-version: latest
         mamba-version: "*"
         activate-environment: ptfenv
