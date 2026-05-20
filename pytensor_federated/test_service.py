@@ -1,5 +1,6 @@
 import multiprocessing
 import platform
+import sys
 import time
 from typing import Sequence, Tuple
 from unittest import mock
@@ -72,6 +73,7 @@ def run_product_queries(client: service.ArraysToArraysServiceClient, n=100):
             prod = client.evaluate(a, b)
             assert prod == a * b
     except:
+        print(sys.exc_info())
         return False
     return True
 
