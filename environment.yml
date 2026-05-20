@@ -4,6 +4,8 @@ channels:
 dependencies:
   - black
   - isort
+  - gxx
+  - matplotlib
   - numpy
   - pytest
   - pytest-cov
@@ -11,4 +13,4 @@ dependencies:
   - psutil
   - pip:
     - betterproto[compiler]==2.0.0b6
-    - pymc>=5.17.0
+    - pymc>=6.0.0

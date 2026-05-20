@@ -116,10 +116,15 @@ class LogpGradOp(Op):
             output_storage[1 + g][0] = grad
         return
 
-    def grad(self, inputs: Sequence[Variable], output_grads: List[Variable]) -> List[Variable]:
+    def pullback(
+        self,
+        inputs: Sequence[Variable],
+        outputs: Sequence[Variable],
+        cotangents: Sequence[Variable],
+    ) -> List[Variable]:
         # Unpack the output gradients of which we only need the
         # one w.r.t. logp
-        g_logp, *gs_inputs = output_grads
+        g_logp, *gs_inputs = cotangents
         for i, g in enumerate(gs_inputs):
             if not isinstance(g.type, pytensor.gradient.DisconnectedType):
                 raise ValueError(f"Can't propagate gradients wrt parameter {i+1}")

@@ -113,7 +113,7 @@ def run_blackbox_linear_model_mcmc(port: int, cores: int, use_async: bool):
     # Check the posterior medians against the ground truth.
     # Print the summary so failure logs are more informative.
     print(arviz.summary(idata))
-    pst = idata.posterior.stack(sample=("chain", "draw"))
+    pst = idata.posterior.dataset.stack(sample=("chain", "draw"))
     np.testing.assert_allclose(np.median(pst.slope), 2, atol=0.1)
     return
 

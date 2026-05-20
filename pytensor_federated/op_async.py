@@ -5,10 +5,11 @@ import pytensor.tensor as at
 from pytensor.compile import optdb
 from pytensor.compile.ops import FromFunctionOp
 from pytensor.graph import FunctionGraph
-from pytensor.graph.basic import Apply, Variable, apply_depends_on
+from pytensor.graph.basic import Apply, Variable
 from pytensor.graph.features import ReplaceValidate
 from pytensor.graph.op import Op, OutputStorageType
 from pytensor.graph.rewriting.basic import GraphRewriter
+from pytensor.graph.traversal import apply_depends_on
 
 from .utils import get_useful_event_loop
 
