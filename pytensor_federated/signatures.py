@@ -1,6 +1,7 @@
 """
 This module contains only type and signature definitions.
 """
+
 from typing import Callable, Sequence, Tuple
 
 import numpy as np
