@@ -111,22 +111,23 @@ class ParallelAsyncOp(AsyncOp):
         output_storage: OutputStorageType,
     ) -> None:
         # Create coroutines the performing the taks of each child node
-        coros = []
+        tasks = []
         ifrom = 0
         ofrom = 0
+        loop = get_useful_event_loop()
         for apply in self.applies:
             ito = ifrom + apply.nin
             oto = ofrom + apply.nout
-            coros.append(
-                apply.op.perform_async(apply, inputs[ifrom:ito], output_storage[ofrom:oto])
+            tasks.append(
+                loop.create_task(
+                    apply.op.perform_async(apply, inputs[ifrom:ito], output_storage[ofrom:oto])
+                )
             )
             ifrom = ito
             ofrom = oto
 
         # Wait for completion of all sub-performs
-        loop = get_useful_event_loop()
-        futures = [asyncio.ensure_future(c, loop=loop) for c in coros]
-        pool = asyncio.gather(*futures, return_exceptions=True)
+        pool = asyncio.gather(*tasks, return_exceptions=True)
         loop.run_until_complete(pool)
         # Output storage was modified inplace by the child operations.
         return
