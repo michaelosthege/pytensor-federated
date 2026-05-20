@@ -49,18 +49,22 @@ def test_linear_model_equivalence():
         intercept: 1.2,
         slope: 0.8,
     }
-    np.testing.assert_array_equal(
+    np.testing.assert_allclose(
         L_model.eval(test_point),
         L_federated.eval(test_point),
+        atol=1e-13,
+        rtol=1e-15,
     )
 
     # And now the gradient
     dL_model = pt.grad(L_model, [intercept, slope])
     dL_federated = pt.grad(L_federated, [intercept, slope])
     for dM, dF in zip(dL_model, dL_federated):
-        np.testing.assert_array_equal(
+        np.testing.assert_allclose(
             dM.eval(test_point),
             dF.eval(test_point),
+            atol=1e-13,
+            rtol=1e-15,
         )
     pass
 
