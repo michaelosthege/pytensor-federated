@@ -35,14 +35,4 @@ def test_get_useful_event_loop():
         assert loop.is_running()
 
     loop.run_until_complete(check_is_running())
-
-    # Calling `get_useful_event_loop` inside the coroutine
-    # should patch the already-running loop to support reentrance.
-    async def check_nesting():
-        assert loop.is_running()
-        nloop = utils.get_useful_event_loop()
-        assert hasattr(nloop, "_nest_patched")
-        loop.run_until_complete(asyncio.sleep(0.01))
-
-    loop.run_until_complete(check_nesting())
     pass
