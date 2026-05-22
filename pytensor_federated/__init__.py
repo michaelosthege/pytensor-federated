@@ -1,3 +1,5 @@
+import importlib.metadata
+
 try:
     from .op_async import AsyncOp
     from .wrapper_ops import (
@@ -19,4 +21,4 @@ from .common import (
 from .service import ArraysToArraysService, ArraysToArraysServiceClient
 from .signatures import ComputeFunc, LogpFunc, LogpGradFunc
 
-__version__ = "2.0.0"
+__version__ = importlib.metadata.version(__package__ or __name__)
