@@ -1,3 +1,39 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pytensor_federated"
+version = "2.0.1"
+description = "Distributed, differentiable and async graph computation for PyTensor."
+readme = "README.md"
+requires-python = ">=3.12"
+license = {text = "GNU Affero General Public License v3"}
+authors = [
+    {name = "Michael Osthege", email = "michael.osthege@outlook.com"}
+]
+classifiers = [
+    "Programming Language :: Python",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "License :: OSI Approved :: GNU Affero General Public License v3",
+]
+dependencies = [
+    "betterproto==2.0.0b7",
+    "black",
+    "isort",
+    "numpy",
+    "psutil",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+
+[tool.setuptools.package-data]
+pytensor_federated = ["py.typed"]
+
 [tool.pytest.ini_options]
 xfail_strict=true
 
